@@ -3,7 +3,7 @@
 *
 * @author Tom (Tom Catullo) tom@cortello.com
 * @package umil
-* @version $Id future_posts_install.php 0.0.1 2010-07-19 16:54:36GMT Tom $
+* @version $Id install_scheduled_posts.php 0.0.2 2010-07-23 16:54:36GMT Tom $
 * @copyright (c) 2010 Cortello Group
 * @license http://opensource.org/licenses/gpl-license.php GNU Public License
 *
@@ -20,7 +20,7 @@ include($phpbb_root_path . 'common.' . $phpEx);
 // Start session management
 $user->session_begin();
 $auth->acl($user->data);
-$user->setup('mods/umil_future_posts_mod');
+$user->setup('mods/umil_scheduled_posts_mod');
 
 if (!file_exists($phpbb_root_path . 'umil/umil.' . $phpEx))
 {
@@ -46,14 +46,14 @@ $umil = new umil(true);
 
 $mod = array(
 	'name'		=> $user->lang['TEST_MOD'],
-	'version'	=> '0.0.1',
-	'config'	=> 'future_posts_version',
-	'enable'	=> 'future_posts_enable',
+	'version'	=> '0.0.2',
+	'config'	=> 'scheduled_posts_version',
+	'enable'	=> 'scheduled_posts_enable',
 );
 
 if (confirm_box(true))
 {
-	// Install the base 0.0.1 version
+	// Install the base 0.0.2 version
 	if (!$umil->config_exists($mod['config']))
 	{
 		// Lets add a config setting for enabling/disabling the MOD and set it to true

@@ -6,8 +6,8 @@
 	<header>
 		<meta name="generator" content="MODX file generated with PP MODX Creator by tumba25 (online version)"/>
 		<license><![CDATA[http://opensource.org/licenses/gpl-license.php GNU General Public License v2]]></license>
-		<title lang="en"><![CDATA[Future Posts]]></title>
-		<description lang="en"><![CDATA[Allows users with the proper permissions to compose a new topic and specify a date/time in the future that the topic will be posted (i.e. made publicly viewable) right from the posting page. Moderators and Administrators with the proper permissions can view topics that are set to be posted in the future in their respective forums. All permissions for using the future post feature and for viewing future topics can be set in the ACP for each individual forum/category on your board.]]></description>
+		<title lang="en"><![CDATA[Scheduled Posts]]></title>
+		<description lang="en"><![CDATA[Allows users with the proper permissions to compose a new topic and specify a date/time in the future that the topic will be posted (i.e. made publicly viewable) right from the posting page. The topic will not be viewable to the public until that scheduled time. Moderators and Administrators with the proper permissions can view topics that are set to be posted in the future in their respective forums. All permissions for using the scheduled post feature and for viewing future scheduled topics can be set in the ACP for each individual forum/category on your board.]]></description>
 		<author-notes lang="en"><![CDATA[It is STRONGLY RECOMMENDED that you install this MOD with AutoMOD, if at all possible. This MOD's install file is built for compatibility, and thus has many in-line edits that could become confusing when installing it by hand. However, if you feel that you would rather install this MOD by hand, you may do so but please be careful and make backups of your board before installing. Special thanks to Phil at phpBB.com for laying the groundwork for this MOD which I picked up from him during development.]]></author-notes>
 		<author-group>
 			<author>
@@ -17,7 +17,7 @@
 				<email><![CDATA[tom@cortello.com]]></email>
 			</author>
 		</author-group>
-		<mod-version>0.0.1</mod-version>
+		<mod-version>0.0.2</mod-version>
 		<installation>
 			<level>intermediate</level>
 			<time>4500</time>
@@ -31,15 +31,23 @@
 					<change><![CDATA[First beta release (Beta 1)]]></change>
 				</changelog>
 			</entry>
+			<entry>
+				<date>2010-07-23</date>
+				<rev-version>0.0.2</rev-version>
+				<changelog lang="en">
+					<change><![CDATA[Changed name of MOD from 'Future Posts' to 'Scheduled Posts' for more relevant name]]></change>
+				</changelog>
+			</entry>
 		</history>
 		<link-group>
 			<link type="template" href="./contrib/subsilver2.xml" lang="en">subsilver2 Edits</link>
+			<link type="contrib" href="./contrib/update_0.0.1-0.0.2.xml" lang="en">Update from version 0.0.1 to 0.0.2</link>
 		</link-group>
 	</header>
 	<action-group>
 		<copy>
-			<file from="root/install_future_posts.php" to="install_future_posts.php"/>
-			<file from="root/language/en/mods/umil_future_posts_mod.php" to="language/en/mods/umil_future_posts_mod.php"/>
+			<file from="root/install_scheduled_posts.php" to="install_scheduled_posts.php"/>
+			<file from="root/language/en/mods/umil_scheduled_posts_mod.php" to="language/en/mods/umil_scheduled_posts_mod.php"/>
 			<file from="root/styles/prosilver/imageset/icon_topic_future.gif" to="styles/prosilver/imageset/icon_topic_future.gif"/>
 			<file from="root/umil/*.*" to="umil/*.*"/>
 		</copy>
@@ -1247,11 +1255,11 @@ function new_present_posts($forum_id, $mark_time)
 		<open src="language/en/common.php">
 			<edit>
 				<find><![CDATA[	'POST_DETAILS'			=> 'Post details',]]></find>
-				<action type="after-add"><![CDATA[	'POST_FUTURE'			=> 'This post is set to be posted at a future time',]]></action>
+				<action type="after-add"><![CDATA[	'POST_FUTURE'			=> 'This post is scheduled to be posted at a future time',]]></action>
 			</edit>
 			<edit>
 				<find><![CDATA[	'TOPICS_UNAPPROVED'	=> 'At least one topic in this forum has not been approved.',]]></find>
-				<action type="after-add"><![CDATA[	'TOPIC_FUTURE'		=> 'This topic is set to be posted at a future time',]]></action>
+				<action type="after-add"><![CDATA[	'TOPIC_FUTURE'		=> 'This topic is scheduled to be posted at a future time',]]></action>
 			</edit>
 		</open>
 		<open src="language/en/posting.php">
@@ -1268,11 +1276,11 @@ function new_present_posts($forum_id, $mark_time)
 		<open src="language/en/acp/permissions_phpbb.php">
 			<edit>
 				<find><![CDATA[	'acl_f_post'		=> array('lang' => 'Can start new topics', 'cat' => 'post'),]]></find>
-				<action type="after-add"><![CDATA[	'acl_f_future_post' => array('lang' => 'Can make future posts', 'cat' => 'post'),]]></action>
+				<action type="after-add"><![CDATA[	'acl_f_future_post' => array('lang' => 'Can make scheduled posts', 'cat' => 'post'),]]></action>
 			</edit>
 			<edit>
 				<find><![CDATA[	'acl_m_info'	=> array('lang' => 'Can view post details', 'cat' => 'misc'),]]></find>
-				<action type="after-add"><![CDATA[	'acl_m_viewfp'	=> array('lang' => 'Can view future posts before specified post date', 'cat' => 'misc'),]]></action>
+				<action type="after-add"><![CDATA[	'acl_m_viewfp'	=> array('lang' => 'Can view future scheduled posts before specified post date', 'cat' => 'misc'),]]></action>
 			</edit>
 		</open>
 		<open src="language/en/acp/styles.php">
@@ -1477,29 +1485,29 @@ function new_present_posts($forum_id, $mark_time)
 	background-color: #F6F4D0 !important;]]></action>
 			</edit>
 		</open>
-		<php-installer><![CDATA[install_future_posts.php]]></php-installer>
+		<php-installer><![CDATA[install_scheduled_posts.php]]></php-installer>
 		<diy-instructions lang="en"><![CDATA[First and foremost, purge the cache, and refresh your templates, imageset, and theme in the ACP (go to the 'Styles' tab).
 
-In order for users to be able to make and view future posts, the proper permissions need to be set. Both instances are explained below.
+In order for users to be able to make and view future (scheduled) posts, the proper permissions need to be set. Both instances are explained below.
 
-1. Allowing users to make future posts.
+1. Allowing users to make scheduled posts.
 
-   You can allow specific users or user groups to make future posts on a per-forum basis.
+   You can allow specific users or user groups to make scheduled posts on a per-forum basis.
 
-     - STEPS: Go to the ACP => Permissions => Forum Based Permissions => Users' forum permissions OR Groups' forum permissions => Enter the user's name OR Choose a group => Select the forum(s) you wish => In the 'Post' tab, find 'Can make future posts' and set to Yes => Apply all permissions.
+     - STEPS: Go to the ACP => Permissions => Forum Based Permissions => Users' forum permissions OR Groups' forum permissions => Enter the user's name OR Choose a group => Select the forum(s) you wish => In the 'Post' tab, find 'Can make scheduled posts' and set to Yes => Apply all permissions.
 
-   Now that user or group can make future posts in the specified forum(s).
+   Now that user or group can make scheduled posts in the specified forum(s).
 
-2. Allowing moderators/admins to view future posts before their post date.
+2. Allowing moderators/admins to view future scheduled posts before their post date.
 
    You can allow specific users or user groups to moderate future posts and view future posts before their post date on a per-forum basis.
 
-     - STEPS: Go to the ACP => Permissions => Forum Based Permissions => Users' forum permissions OR Groups' forum permissions => Enter the user's name OR Choose a group => Select the forum(s) you wish => Find 'Select type' dropdown box near top of page and choose 'Moderator permissions' and click Go => In the 'Misc' tab, find 'Can view future posts before specified post date' and set to Yes => Apply all permissions.
+     - STEPS: Go to the ACP => Permissions => Forum Based Permissions => Users' forum permissions OR Groups' forum permissions => Enter the user's name OR Choose a group => Select the forum(s) you wish => Find 'Select type' dropdown box near top of page and choose 'Moderator permissions' and click Go => In the 'Misc' tab, find 'Can view future scheduled posts before specified post date' and set to Yes => Apply all permissions.
 
-   Now that user or group can view and moderate ALL future posts in the specified forum(s).
+   Now that user or group can view and moderate ALL future scheduled posts in the specified forum(s).
 
 ------------------------------------------------
 
-If you require additional assistance, please visit the Support Section for this MOD in the Cusomisations Database and post a new topic there for help (URL to come).]]></diy-instructions>
+If you require additional assistance, please visit the Support Section for this MOD in the Cusomisations Database and post a new topic there for help: http://www.phpbb.com/customise/db/mod/scheduled_posts/support/]]></diy-instructions>
 	</action-group>
 </mod>

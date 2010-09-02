@@ -5,8 +5,8 @@
 <mod xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.phpbb.com/mods/xml/modx-1.2.5.xsd">
 	<header>
 		<license><![CDATA[http://opensource.org/licenses/gpl-license.php GNU General Public License v2]]></license>
-		<title lang="en"><![CDATA[Future Posts - subsilver2 Edits]]></title>
-		<description lang="en"><![CDATA[(These are the edits for the subsilver2 style.) This MOD allows users with the proper permissions to compose a new topic and specify a date/time in the future that the topic will be posted (i.e. made publicly viewable) right from the posting page. Moderators and Administrators with the proper permissions can view topics that are set to be posted in the future in their respective forums. All permissions for using the future post feature and for viewing future topics can be set in the ACP for each individual forum/category on your board.]]></description>
+		<title lang="en"><![CDATA[Scheduled Posts - subsilver2 Edits]]></title>
+		<description lang="en"><![CDATA[(These are the edits for the subsilver2 style.) This MOD allows users with the proper permissions to compose a new topic and specify a date/time in the future that the topic will be posted (i.e. made publicly viewable) right from the posting page. The topic will not be viewable to the public until that scheduled time. Moderators and Administrators with the proper permissions can view topics that are set to be posted in the future in their respective forums. All permissions for using the scheduled post feature and for viewing future scheduled topics can be set in the ACP for each individual forum/category on your board.]]></description>
 		<author-notes lang="en"><![CDATA[These subsilver2 edits should be easy enough to install by hand (easier than the main install file, which is easier to run in AutoMOD). It should not take very long to perform these edits, even though there are quite a few edits to make in this file.]]></author-notes>
 		<author-group>
 			<author>
@@ -16,7 +16,7 @@
 				<email><![CDATA[tom@cortello.com]]></email>
 			</author>
 		</author-group>
-		<mod-version>0.0.1</mod-version>
+		<mod-version>0.0.2</mod-version>
 		<installation>
 			<level>easy</level>
 			<time>1200</time>
@@ -28,6 +28,13 @@
 				<rev-version>0.0.1</rev-version>
 				<changelog lang="en">
 					<change><![CDATA[First beta release (Beta 1)]]></change>
+				</changelog>
+			</entry>
+			<entry>
+				<date>2010-07-23</date>
+				<rev-version>0.0.2</rev-version>
+				<changelog lang="en">
+					<change><![CDATA[Changed name of MOD from 'Future Posts' to 'Scheduled Posts' for more relevant name]]></change>
 				</changelog>
 			</entry>
 		</history>
