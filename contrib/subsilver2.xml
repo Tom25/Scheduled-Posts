@@ -16,7 +16,7 @@
 				<email><![CDATA[tom@cortello.com]]></email>
 			</author>
 		</author-group>
-		<mod-version>0.0.2</mod-version>
+		<mod-version>1.0.0</mod-version>
 		<installation>
 			<level>easy</level>
 			<time>1200</time>
@@ -35,6 +35,13 @@
 				<rev-version>0.0.2</rev-version>
 				<changelog lang="en">
 					<change><![CDATA[Changed name of MOD from 'Future Posts' to 'Scheduled Posts' for more relevant name]]></change>
+				</changelog>
+			</entry>
+			<entry>
+				<date>2010-07-24</date>
+				<rev-version>1.0.0</rev-version>
+				<changelog lang="en">
+					<change><![CDATA[First stable release]]></change>
 				</changelog>
 			</entry>
 		</history>

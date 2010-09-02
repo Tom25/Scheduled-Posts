@@ -22,14 +22,14 @@ if (empty($lang) || !is_array($lang))
 // in a url you again do not need to specify an order e.g., 'Click %sHERE%s' is fine
 
 $lang = array_merge($lang, array(
-	'INSTALL_TEST_MOD'				=> 'Install Future Posts',
-	'INSTALL_TEST_MOD_CONFIRM'		=> 'Are you ready to install the Future Posts MOD?',
-	'TEST_MOD'						=> 'Future Posts',
+	'INSTALL_TEST_MOD'				=> 'Install Scheduled Posts',
+	'INSTALL_TEST_MOD_CONFIRM'		=> 'Are you ready to install the Scheduled Posts MOD?',
+	'TEST_MOD'						=> 'Scheduled Posts',
 
-	'UNINSTALL_TEST_MOD'			=> 'Uninstall Future Posts',
-	'UNINSTALL_TEST_MOD_CONFIRM'	=> 'Are you ready to uninstall the Future Posts MOD?  All settings and data saved by this mod will be removed!',
-	'UPDATE_TEST_MOD'				=> 'Update Future Posts MOD',
-	'UPDATE_TEST_MOD_CONFIRM'		=> 'Are you ready to update the Future Posts MOD?',
+	'UNINSTALL_TEST_MOD'			=> 'Uninstall Scheduled Posts',
+	'UNINSTALL_TEST_MOD_CONFIRM'	=> 'Are you ready to uninstall the Scheduled Posts MOD?  All settings and data saved by this MOD will be removed!',
+	'UPDATE_TEST_MOD'				=> 'Update Scheduled Posts MOD',
+	'UPDATE_TEST_MOD_CONFIRM'		=> 'Are you ready to update the Scheduled Posts MOD?',
 ));
 
 ?>

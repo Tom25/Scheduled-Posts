@@ -17,7 +17,7 @@
 				<email><![CDATA[tom@cortello.com]]></email>
 			</author>
 		</author-group>
-		<mod-version>0.0.2</mod-version>
+		<mod-version>1.0.0</mod-version>
 		<installation>
 			<level>intermediate</level>
 			<time>4500</time>
@@ -38,10 +38,18 @@
 					<change><![CDATA[Changed name of MOD from 'Future Posts' to 'Scheduled Posts' for more relevant name]]></change>
 				</changelog>
 			</entry>
+			<entry>
+				<date>2010-08-31</date>
+				<rev-version>1.0.0</rev-version>
+				<changelog lang="en">
+					<change><![CDATA[First stable release]]></change>
+					<change><![CDATA[Fixed bug with editing scheduled post time for already-made posts]]></change>
+				</changelog>
+			</entry>
 		</history>
 		<link-group>
 			<link type="template" href="./contrib/subsilver2.xml" lang="en">subsilver2 Edits</link>
-			<link type="contrib" href="./contrib/update_0.0.1-0.0.2.xml" lang="en">Update from version 0.0.1 to 0.0.2</link>
+			<link type="contrib" href="./contrib/update_001-002.xml" lang="en">Update from version 0.0.1 to 0.0.2</link>
 		</link-group>
 	</header>
 	<action-group>
@@ -173,7 +181,7 @@ if (($mode == 'reply' || $mode == 'quote' || $mode == 'bump') && $post_data['top
 			</edit>
 			<edit>
 				<find><![CDATA[	'SUBJECT'				=> $post_data['post_subject'],]]></find>
-				<action type="after-add"><![CDATA[	'FUTURE_POST_TIME'		=> ((!empty($post_data['future_post_time'])) ? ((!$submit && !$preview) ? $user->format_date($post_time) : $post_data['future_post_time']) : (($post_data['post_time'] && $mode == 'edit') ? $user->format_date($post_data['post_time']) : '')),]]></action>
+				<action type="after-add"><![CDATA[	'FUTURE_POST_TIME'		=> ((!empty($post_data['future_post_time'])) ? ((!$submit && !$preview) ? fp_format_date($post_time) : $post_data['future_post_time']) : (($post_data['post_time'] && $mode == 'edit') ? fp_format_date($post_data['post_time']) : '')),]]></action>
 			</edit>
 			<edit>
 				<find><![CDATA[	'S_HIDDEN_FIELDS'		=> $s_hidden_fields)]]></find>
@@ -309,69 +317,15 @@ if ($topic_data['topic_time'] > time() && $topic_data['topic_poster'] != $user->
 			</edit>
 			<edit>
 				<find><![CDATA[		watch_topic_forum('forum', $s_watching_forum, $user->data['user_id'], $forum_id, 0);]]></find>
-				<inline-edit>
-					<inline-find><![CDATA[watch_topic_forum]]></inline-find>
-					<inline-action type="replace-with"><![CDATA[trigger_error]]></inline-action>
-				</inline-edit>
-				<inline-edit>
-					<inline-find><![CDATA[(']]></inline-find>
-					<inline-find><![CDATA[forum]]></inline-find>
-					<inline-action type="replace-with"><![CDATA[NO_TOPIC]]></inline-action>
-				</inline-edit>
-				<inline-edit>
-					<inline-find><![CDATA[, $s_watching_forum, $user->data['user_id'], $forum_id, 0]]></inline-find>
-					<inline-action type="replace-with"/>
-				</inline-edit>
+				<action type="replace-with"><![CDATA[		trigger_error('NO_TOPIC');]]></action>
 			</edit>
 			<edit>
 				<find><![CDATA[	if (check_link_hash(request_var('hash', ''), "topic_$topic_id"))]]></find>
-				<inline-edit>
-					<inline-find><![CDATA[	if (]]></inline-find>
-					<inline-find><![CDATA[check_link_hash]]></inline-find>
-					<inline-action type="replace-with"><![CDATA[$topic_data['topic_time'] <= time]]></inline-action>
-				</inline-edit>
-				<inline-edit>
-					<inline-find><![CDATA[(]]></inline-find>
-					<inline-find><![CDATA[request_var]]></inline-find>
-					<inline-action type="replace-with"><![CDATA[) || $auth->acl_get]]></inline-action>
-				</inline-edit>
-				<inline-edit>
-					<inline-find><![CDATA[(']]></inline-find>
-					<inline-find><![CDATA[hash]]></inline-find>
-					<inline-action type="replace-with"><![CDATA[m_viewfp]]></inline-action>
-				</inline-edit>
-				<inline-edit>
-					<inline-find><![CDATA[', ]]></inline-find>
-					<inline-action type="after-add"><![CDATA[$forum_id) || $user->data[]]></inline-action>
-				</inline-edit>
-				<inline-edit>
-					<inline-find><![CDATA['']]></inline-find>
-					<inline-action type="replace-with"><![CDATA['user_id'] == $topic_data['topic_poster']]]></inline-action>
-				</inline-edit>
-				<inline-edit>
-					<inline-find><![CDATA[), "topic_$topic_id"))]]></inline-find>
-					<inline-action type="replace-with"><![CDATA[)]]></inline-action>
-				</inline-edit>
+				<action type="replace-with"><![CDATA[	if ($topic_data['topic_time'] <= time() || $auth->acl_get('m_viewfp', $forum_id) || $user->data['user_id'] == $topic_data['topic_poster'])]]></action>
 			</edit>
 			<edit>
 				<find><![CDATA[		if (!$topic_data['bookmarked'])]]></find>
-				<inline-edit>
-					<inline-find><![CDATA[		if (]]></inline-find>
-					<inline-find><![CDATA[!$topic_data[]]></inline-find>
-					<inline-action type="replace-with"><![CDATA[check_link_hash(request_var(]]></inline-action>
-				</inline-edit>
-				<inline-edit>
-					<inline-find><![CDATA[bookmarked]]></inline-find>
-					<inline-action type="replace-with"><![CDATA[hash]]></inline-action>
-				</inline-edit>
-				<inline-edit>
-					<inline-find><![CDATA[']]]></inline-find>
-					<inline-action type="replace-with"><![CDATA[', '']]></inline-action>
-				</inline-edit>
-				<inline-edit>
-					<inline-find><![CDATA[)]]></inline-find>
-					<inline-action type="after-add"><![CDATA[, "topic_$topic_id"))]]></inline-action>
-				</inline-edit>
+				<action type="replace-with"><![CDATA[		if (check_link_hash(request_var('hash', ''), "topic_$topic_id"))]]></action>
 			</edit>
 			<edit>
 				<find><![CDATA[		{]]></find>
@@ -395,29 +349,7 @@ if ($topic_data['topic_time'] > time() && $topic_data['topic_poster'] != $user->
 			</edit>
 			<edit>
 				<find><![CDATA[				WHERE user_id = {$user->data['user_id']}]]></find>
-				<inline-edit>
-					<inline-find><![CDATA[	WHERE user_id]]></inline-find>
-					<inline-action type="replace-with"><![CDATA[$message]]></inline-action>
-				</inline-edit>
-				<inline-edit>
-					<inline-find><![CDATA[ = {]]></inline-find>
-					<inline-action type="replace-with"><![CDATA[ = ]]></inline-action>
-				</inline-edit>
-				<inline-edit>
-					<inline-find><![CDATA[$user->]]></inline-find>
-					<inline-find><![CDATA[data]]></inline-find>
-					<inline-action type="replace-with"><![CDATA[lang]]></inline-action>
-				</inline-edit>
-				<inline-edit>
-					<inline-find><![CDATA[[']]></inline-find>
-					<inline-find><![CDATA[user_id]]></inline-find>
-					<inline-action type="replace-with"><![CDATA[BOOKMARK_ERR]]></inline-action>
-				</inline-edit>
-				<inline-edit>
-					<inline-find><![CDATA[']]]></inline-find>
-					<inline-find><![CDATA[}]]></inline-find>
-					<inline-action type="replace-with"><![CDATA[ . '<br /><br />' . sprintf($user->lang['RETURN_TOPIC'], '<a href="' . $viewtopic_url . '">', '</a>');]]></inline-action>
-				</inline-edit>
+				<action type="replace-with"><![CDATA[			$message = $user->lang['BOOKMARK_ERR'] . '<br /><br />' . sprintf($user->lang['RETURN_TOPIC'], '<a href="' . $viewtopic_url . '">', '</a>');]]></action>
 			</edit>
 			<edit>
 				<remove><![CDATA[					AND topic_id = $topic_id";
@@ -425,35 +357,12 @@ if ($topic_data['topic_time'] > time() && $topic_data['topic_poster'] != $user->
 			</edit>
 			<edit>
 				<find><![CDATA[		$message = (($topic_data['bookmarked']) ? $user->lang['BOOKMARK_REMOVED'] : $user->lang['BOOKMARK_ADDED']) . '<br /><br />' . sprintf($user->lang['RETURN_TOPIC'], '<a href="' . $viewtopic_url . '">', '</a>');]]></find>
-				<inline-edit>
-					<inline-find><![CDATA[$message = ]]></inline-find>
-					<inline-action type="replace-with"><![CDATA[meta_refresh]]></inline-action>
-				</inline-edit>
-				<inline-edit>
-					<inline-find><![CDATA[(]]></inline-find>
-					<inline-find><![CDATA[($topic_data['bookmarked']) ? $user->lang['BOOKMARK_REMOVED'] : $user->lang['BOOKMARK_ADDED']) . '<br /><br />' . sprintf($user->lang['RETURN_TOPIC']]]></inline-find>
-					<inline-action type="replace-with"><![CDATA[3]]></inline-action>
-				</inline-edit>
-				<inline-edit>
-					<inline-find><![CDATA[, '<a href="' . ]]></inline-find>
-					<inline-action type="replace-with"><![CDATA[, ]]></inline-action>
-				</inline-edit>
-				<inline-edit>
-					<inline-find><![CDATA[$viewtopic_url . '">', '</a>']]></inline-find>
-					<inline-action type="replace-with"><![CDATA[$viewtopic_url]]></inline-action>
-				</inline-edit>
+				<action type="replace-with"><![CDATA[		meta_refresh(3, $viewtopic_url);]]></action>
 				<action type="after-add"><![CDATA[		trigger_error($message);]]></action>
 			</edit>
 			<edit>
 				<find><![CDATA[		$message = $user->lang['BOOKMARK_ERR'] . '<br /><br />' . sprintf($user->lang['RETURN_TOPIC'], '<a href="' . $viewtopic_url . '">', '</a>');]]></find>
-				<inline-edit>
-					<inline-find><![CDATA[$message = $user->lang[]]></inline-find>
-					<inline-action type="replace-with"><![CDATA[trigger_error(]]></inline-action>
-				</inline-edit>
-				<inline-edit>
-					<inline-find><![CDATA['BOOKMARK_ERR'] . '<br /><br />' . sprintf($user->lang['RETURN_TOPIC'], '<a href="' . $viewtopic_url . '">', '</a>]]></inline-find>
-					<inline-action type="replace-with"><![CDATA['NO_TOPIC]]></inline-action>
-				</inline-edit>
+				<action type="replace-with"><![CDATA[		trigger_error('NO_TOPIC');]]></action>
 			</edit>
 			<edit>
 				<remove><![CDATA[	meta_refresh(3, $viewtopic_url);
@@ -486,6 +395,23 @@ if ($topic_data['topic_time'] > time() && $topic_data['topic_poster'] != $user->
 			<edit>
 				<find><![CDATA[					AND topic_last_post_time > ' . $mark_time_forum . ']]></find>
 				<action type="after-add"><![CDATA[					AND topic_last_post_time <= ' . time() . ']]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[
+/**
+* Handler for init calls in phpBB. This function is called in user::setup();
+* This function supports hooks.
+*/
+function phpbb_user_session_handler()]]></find>
+				<action type="before-add"><![CDATA[/**
+* Simple function that outputs a given timestamp in a specific date format.
+*/
+function fp_format_date($timestamp)
+{
+	$formatted = date('d F Y, H:i', $timestamp);
+
+	return $formatted;
+}]]></action>
 			</edit>
 		</open>
 		<open src="includes/functions_display.php">
@@ -646,23 +572,12 @@ function new_present_posts($forum_id, $mark_time)
 			</edit>
 			<edit>
 				<find><![CDATA[	$current_time = time();]]></find>
-				<inline-edit>
-					<inline-find><![CDATA[	$current_time = ]]></inline-find>
-					<inline-action type="after-add"><![CDATA[($post_time < 1) ? ]]></inline-action>
-				</inline-edit>
-				<inline-edit>
-					<inline-find><![CDATA[time()]]></inline-find>
-					<inline-action type="after-add"><![CDATA[ : $post_time]]></inline-action>
-				</inline-edit>
+				<action type="replace-with"><![CDATA[	$current_time = ($post_time < 1) ? time() : $post_time;]]></action>
 				<action type="after-add"><![CDATA[	$future_post = ($current_time > time()) ? true : false;]]></action>
 			</edit>
 			<edit>
 				<find><![CDATA[					'post_edit_time'	=> $current_time,]]></find>
-				<inline-edit>
-					<inline-find><![CDATA[					'post_edit_time'	=> ]]></inline-find>
-					<inline-find><![CDATA[$current_time]]></inline-find>
-					<inline-action type="replace-with"><![CDATA[time()]]></inline-action>
-				</inline-edit>
+				<action type="replace-with"><![CDATA[					'post_edit_time'	=> time(),]]></action>
 			</edit>
 			<edit>
 				<find><![CDATA[				'post_subject'		=> $subject,]]></find>
@@ -695,24 +610,7 @@ function new_present_posts($forum_id, $mark_time)
 			</edit>
 			<edit>
 				<find><![CDATA[	if ($user->data['user_id'] == $poster_id)]]></find>
-				<inline-edit>
-					<inline-find><![CDATA[	if (]]></inline-find>
-					<inline-find><![CDATA[$user->data['user_id']]]></inline-find>
-					<inline-action type="replace-with"><![CDATA[($post_time]]></inline-action>
-				</inline-edit>
-				<inline-edit>
-					<inline-find><![CDATA[=]]></inline-find>
-					<inline-action type="replace-with"><![CDATA[&& $post_time <]]></inline-action>
-				</inline-edit>
-				<inline-edit>
-					<inline-find><![CDATA[= ]]></inline-find>
-					<inline-find><![CDATA[$poster_id]]></inline-find>
-					<inline-action type="replace-with"><![CDATA[time(]]></inline-action>
-				</inline-edit>
-				<inline-edit>
-					<inline-find><![CDATA[)]]></inline-find>
-					<inline-action type="after-add"><![CDATA[) || !$post_time)]]></inline-action>
-				</inline-edit>
+				<action type="replace-with"><![CDATA[	if (($post_time && $post_time <= time()) || !$post_time)]]></action>
 			</edit>
 			<edit>
 				<find><![CDATA[	{]]></find>
@@ -720,25 +618,7 @@ function new_present_posts($forum_id, $mark_time)
 			</edit>
 			<edit>
 				<find><![CDATA[		if (!$data['notify_set'] && $data['notify'])]]></find>
-				<inline-edit>
-					<inline-find><![CDATA[		if (]]></inline-find>
-					<inline-find><![CDATA[!$data]]></inline-find>
-					<inline-action type="replace-with"><![CDATA[$user->data]]></inline-action>
-				</inline-edit>
-				<inline-edit>
-					<inline-find><![CDATA[[']]></inline-find>
-					<inline-find><![CDATA[notify_set]]></inline-find>
-					<inline-action type="replace-with"><![CDATA[user_id]]></inline-action>
-				</inline-edit>
-				<inline-edit>
-					<inline-find><![CDATA['] ]]></inline-find>
-					<inline-find><![CDATA[&&]]></inline-find>
-					<inline-action type="replace-with"><![CDATA[==]]></inline-action>
-				</inline-edit>
-				<inline-edit>
-					<inline-find><![CDATA[$data['notify']]]></inline-find>
-					<inline-action type="replace-with"><![CDATA[$poster_id]]></inline-action>
-				</inline-edit>
+				<action type="replace-with"><![CDATA[		if ($user->data['user_id'] == $poster_id)]]></action>
 			</edit>
 			<edit>
 				<find><![CDATA[		{]]></find>
@@ -758,39 +638,7 @@ function new_present_posts($forum_id, $mark_time)
 			</edit>
 			<edit>
 				<find><![CDATA[		else if (($config['email_enable'] || $config['jab_enable']) && $data['notify_set'] && !$data['notify'])]]></find>
-				<inline-edit>
-					<inline-remove><![CDATA[else ]]></inline-remove>
-				</inline-edit>
-				<inline-edit>
-					<inline-find><![CDATA[if (]]></inline-find>
-					<inline-find><![CDATA[($config[]]></inline-find>
-					<inline-action type="replace-with"><![CDATA[$mode == ]]></inline-action>
-				</inline-edit>
-				<inline-edit>
-					<inline-find><![CDATA['email_enable]]></inline-find>
-					<inline-action type="replace-with"><![CDATA['post]]></inline-action>
-				</inline-edit>
-				<inline-edit>
-					<inline-find><![CDATA[']]]></inline-find>
-					<inline-action type="replace-with"><![CDATA[']]></inline-action>
-				</inline-edit>
-				<inline-edit>
-					<inline-find><![CDATA[ || ]]></inline-find>
-					<inline-find><![CDATA[$config[]]></inline-find>
-					<inline-action type="replace-with"><![CDATA[$mode == ]]></inline-action>
-				</inline-edit>
-				<inline-edit>
-					<inline-find><![CDATA['jab_enable]]></inline-find>
-					<inline-action type="replace-with"><![CDATA['reply]]></inline-action>
-				</inline-edit>
-				<inline-edit>
-					<inline-find><![CDATA[']]]></inline-find>
-					<inline-action type="replace-with"><![CDATA[' || $mode == 'quote']]></inline-action>
-				</inline-edit>
-				<inline-edit>
-					<inline-find><![CDATA[) && $data['notify_set'] && !$data['notify'])]]></inline-find>
-					<inline-action type="replace-with"><![CDATA[)]]></inline-action>
-				</inline-edit>
+				<action type="replace-with"><![CDATA[		if ($mode == 'post' || $mode == 'reply' || $mode == 'quote')]]></action>
 			</edit>
 			<edit>
 				<remove><![CDATA[			$sql = 'DELETE FROM ' . TOPICS_WATCH_TABLE . '
@@ -802,15 +650,7 @@ function new_present_posts($forum_id, $mark_time)
 			</edit>
 			<edit>
 				<find><![CDATA[			$db->sql_query($sql);]]></find>
-				<inline-edit>
-					<inline-find><![CDATA[$db->sql_query]]></inline-find>
-					<inline-action type="replace-with"><![CDATA[markread]]></inline-action>
-				</inline-edit>
-				<inline-edit>
-					<inline-find><![CDATA[(]]></inline-find>
-					<inline-find><![CDATA[$sql]]></inline-find>
-					<inline-action type="replace-with"><![CDATA['post', $data['forum_id'], $data['topic_id'], $data['post_time']]]></inline-action>
-				</inline-edit>
+				<action type="replace-with"><![CDATA[			markread('post', $data['forum_id'], $data['topic_id'], $data['post_time']);]]></action>
 			</edit>
 			<edit>
 				<remove><![CDATA[	}]]></remove>
@@ -849,61 +689,27 @@ function new_present_posts($forum_id, $mark_time)
 			</edit>
 			<edit>
 				<find><![CDATA[		if ($topic_type == POST_GLOBAL)]]></find>
-				<inline-edit>
-					<inline-find><![CDATA[		if (]]></inline-find>
-					<inline-find><![CDATA[$topic_type]]></inline-find>
-					<inline-action type="replace-with"><![CDATA[$config['load_db_lastread']]]></inline-action>
-				</inline-edit>
-				<inline-edit>
-					<inline-find><![CDATA[==]]></inline-find>
-					<inline-action type="replace-with"><![CDATA[&&]]></inline-action>
-				</inline-edit>
-				<inline-edit>
-					<inline-find><![CDATA[POST_GLOBAL]]></inline-find>
-					<inline-action type="replace-with"><![CDATA[$user->data['is_registered']]]></inline-action>
-				</inline-edit>
+				<action type="replace-with"><![CDATA[		if ($config['load_db_lastread'] && $user->data['is_registered'])]]></action>
 			</edit>
 			<edit>
 				<find><![CDATA[			$sql = 'SELECT MAX(topic_last_post_time) as forum_last_post_time]]></find>
-				<inline-edit>
-					<inline-find><![CDATA[			$sql = 'SELECT ]]></inline-find>
-					<inline-find><![CDATA[MAX(topic_last_post_time) as forum_last_post_time]]></inline-find>
-					<inline-action type="replace-with"><![CDATA[mark_time]]></inline-action>
-				</inline-edit>
+				<action type="replace-with"><![CDATA[			$sql = 'SELECT mark_time]]></action>
 			</edit>
 			<edit>
 				<find><![CDATA[				FROM ' . TOPICS_TABLE . ']]></find>
-				<inline-edit>
-					<inline-find><![CDATA[				FROM ' . ]]></inline-find>
-					<inline-find><![CDATA[TOPICS_TABLE]]></inline-find>
-					<inline-action type="replace-with"><![CDATA[FORUMS_TRACK_TABLE]]></inline-action>
-				</inline-edit>
+				<action type="replace-with"><![CDATA[				FROM ' . FORUMS_TRACK_TABLE . ']]></action>
 				<action type="after-add"><![CDATA[				WHERE user_id = ' . $user->data['user_id'] . ']]></action>
 			</edit>
 			<edit>
 				<find><![CDATA[				WHERE forum_id = 0';]]></find>
-				<inline-edit>
-					<inline-find><![CDATA[WHERE]]></inline-find>
-					<inline-action type="replace-with"><![CDATA[	AND]]></inline-action>
-				</inline-edit>
-				<inline-edit>
-					<inline-find><![CDATA[ forum_id = ]]></inline-find>
-					<inline-action type="after-add"><![CDATA[' . (($topic_type == POST_GLOBAL) ? ]]></inline-action>
-				</inline-edit>
-				<inline-edit>
-					<inline-find><![CDATA[0']]></inline-find>
-					<inline-action type="replace-with"><![CDATA[0 : $data['forum_id'])]]></inline-action>
-				</inline-edit>
+				<action type="replace-with"><![CDATA[					AND forum_id = ' . (($topic_type == POST_GLOBAL) ? 0 : $data['forum_id']);]]></action>
 				<action type="after-add"><![CDATA[			$result = $db->sql_query($sql);
 			$f_mark_time = (int) $db->sql_fetchfield('mark_time');
 			$db->sql_freeresult($result);]]></action>
 			</edit>
 			<edit>
 				<find><![CDATA[		else]]></find>
-				<inline-edit>
-					<inline-find><![CDATA[		else]]></inline-find>
-					<inline-action type="after-add"><![CDATA[ if ($config['load_anon_lastread'] || $user->data['is_registered'])]]></inline-action>
-				</inline-edit>
+				<action type="replace-with"><![CDATA[		else if ($config['load_anon_lastread'] || $user->data['is_registered'])]]></action>
 			</edit>
 			<edit>
 				<remove><![CDATA[			$sql = 'SELECT forum_last_post_time
@@ -911,15 +717,7 @@ function new_present_posts($forum_id, $mark_time)
 			</edit>
 			<edit>
 				<find><![CDATA[				WHERE forum_id = ' . $data['forum_id'];]]></find>
-				<inline-edit>
-					<inline-find><![CDATA[	WHERE forum_id]]></inline-find>
-					<inline-action type="replace-with"><![CDATA[$f_mark_time]]></inline-action>
-				</inline-edit>
-				<inline-edit>
-					<inline-find><![CDATA[ = ]]></inline-find>
-					<inline-find><![CDATA[' . $data['forum_id']]]></inline-find>
-					<inline-action type="replace-with"><![CDATA[false]]></inline-action>
-				</inline-edit>
+				<action type="replace-with"><![CDATA[			$f_mark_time = false;]]></action>
 			</edit>
 			<edit>
 				<remove><![CDATA[		$result = $db->sql_query($sql);
@@ -928,40 +726,7 @@ function new_present_posts($forum_id, $mark_time)
 			</edit>
 			<edit>
 				<find><![CDATA[		update_forum_tracking_info((($topic_type == POST_GLOBAL) ? 0 : $data['forum_id']), $forum_last_post_time, $f_mark_time, false);]]></find>
-				<inline-edit>
-					<inline-find><![CDATA[update_forum_tracking_info]]></inline-find>
-					<inline-action type="replace-with"><![CDATA[if ]]></inline-action>
-				</inline-edit>
-				<inline-edit>
-					<inline-find><![CDATA[((]]></inline-find>
-					<inline-find><![CDATA[($topic_type == POST_GLOBAL) ? 0 : $data]]></inline-find>
-					<inline-action type="replace-with"><![CDATA[$config]]></inline-action>
-				</inline-edit>
-				<inline-edit>
-					<inline-find><![CDATA[[']]></inline-find>
-					<inline-find><![CDATA[forum_id]]></inline-find>
-					<inline-action type="replace-with"><![CDATA[load_db_lastread'] && $user->data['is_registered]]></inline-action>
-				</inline-edit>
-				<inline-edit>
-					<inline-find><![CDATA[']),]]></inline-find>
-					<inline-action type="replace-with"><![CDATA['])]]></inline-action>
-				</inline-edit>
-				<inline-edit>
-					<inline-find><![CDATA[$forum_last_post_time,]]></inline-find>
-					<inline-action type="replace-with"><![CDATA[||]]></inline-action>
-				</inline-edit>
-				<inline-edit>
-					<inline-find><![CDATA[$f_mark_time,]]></inline-find>
-					<inline-action type="replace-with"><![CDATA[$config['load_anon_lastread']]]></inline-action>
-				</inline-edit>
-				<inline-edit>
-					<inline-find><![CDATA[false]]></inline-find>
-					<inline-action type="replace-with"><![CDATA[|| $user->data['is_registered']]]></inline-action>
-				</inline-edit>
-				<inline-edit>
-					<inline-find><![CDATA[);]]></inline-find>
-					<inline-action type="replace-with"><![CDATA[)]]></inline-action>
-				</inline-edit>
+				<action type="replace-with"><![CDATA[		if (($config['load_db_lastread'] && $user->data['is_registered']) || $config['load_anon_lastread'] || $user->data['is_registered'])]]></action>
 				<action type="after-add"><![CDATA[		{
 			// Update forum info
 			if ($topic_type == POST_GLOBAL)
@@ -1000,15 +765,7 @@ function new_present_posts($forum_id, $mark_time)
 			</edit>
 			<edit>
 				<find><![CDATA[	if ($mode != 'edit' && $mode != 'delete' && $post_approval)]]></find>
-				<inline-edit>
-					<inline-find><![CDATA[	if ($mode != 'edit' && $mode != 'delete' && $post_approval]]></inline-find>
-					<inline-action type="before-add"><![CDATA[	]]></inline-action>
-					<inline-action type="after-add"><![CDATA[ && (($post_time && $post_time <= time(]]></inline-action>
-				</inline-edit>
-				<inline-edit>
-					<inline-find><![CDATA[)]]></inline-find>
-					<inline-action type="after-add"><![CDATA[) || !$post_time))]]></inline-action>
-				</inline-edit>
+				<action type="replace-with"><![CDATA[		if ($mode != 'edit' && $mode != 'delete' && $post_approval && (($post_time && $post_time <= time()) || !$post_time))]]></action>
 			</edit>
 			<edit>
 				<find><![CDATA[		user_notification($mode, $subject, $data['topic_title'], $data['forum_name'], $data['forum_id'], $data['topic_id'], $data['post_id']);]]></find>
@@ -1401,24 +1158,7 @@ function new_present_posts($forum_id, $mark_time)
 			</edit>
 			<edit>
 				<find><![CDATA[						<!-- IF searchresults.S_TOPIC_REPORTED --><a href="{searchresults.U_MCP_REPORT}">{REPORTED_IMG}</a><!-- ENDIF --><br />]]></find>
-				<inline-edit>
-					<inline-find><![CDATA[						<!-- IF searchresults.]]></inline-find>
-					<inline-find><![CDATA[S_TOPIC_REPORTED]]></inline-find>
-					<inline-action type="replace-with"><![CDATA[S_TOPIC_POST_FUTURE]]></inline-action>
-				</inline-edit>
-				<inline-edit>
-					<inline-find><![CDATA[ --><a href="]]></inline-find>
-					<inline-action type="replace-with"><![CDATA[ -->]]></inline-action>
-				</inline-edit>
-				<inline-edit>
-					<inline-find><![CDATA[{]]></inline-find>
-					<inline-find><![CDATA[searchresults.U_MCP_REPORT]]></inline-find>
-					<inline-action type="replace-with"><![CDATA[FUTURE_IMG]]></inline-action>
-				</inline-edit>
-				<inline-edit>
-					<inline-find><![CDATA[}">{REPORTED_IMG}</a>]]></inline-find>
-					<inline-action type="replace-with"><![CDATA[}]]></inline-action>
-				</inline-edit>
+				<action type="replace-with"><![CDATA[						<!-- IF searchresults.S_TOPIC_POST_FUTURE -->{FUTURE_IMG}<!-- ENDIF --><br />]]></action>
 			</edit>
 			<edit>
 				<find><![CDATA[		<div class="search post <!-- IF searchresults.S_ROW_COUNT is odd -->bg1<!-- ELSE -->bg2<!-- ENDIF --><!-- IF searchresults.S_POST_REPORTED --> reported<!-- ENDIF -->">]]></find>
