@@ -1,0 +1,1505 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml-stylesheet type="text/xsl" href="modx.prosilver.en.xsl"?>
+<!--NOTICE: Please open this file in your web browser. If presented with a security warning, you may safely tell it to allow the blocked content.-->
+<!--For security purposes, please check: http://www.phpbb.com/mods/ for the latest version of this MOD.\nAlthough MODs are checked before being allowed in the MODs Database there is no guarantee that there are no security problems within the MOD.\nNo support will be given for MODs not found within the MODs Database which can be found at http://www.phpbb.com/mods/-->
+<mod xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.phpbb.com/mods/xml/modx-1.2.5.xsd">
+	<header>
+		<meta name="generator" content="MODX file generated with PP MODX Creator by tumba25 (online version)"/>
+		<license><![CDATA[http://opensource.org/licenses/gpl-license.php GNU General Public License v2]]></license>
+		<title lang="en"><![CDATA[Future Posts]]></title>
+		<description lang="en"><![CDATA[Allows users with the proper permissions to compose a new topic and specify a date/time in the future that the topic will be posted (i.e. made publicly viewable) right from the posting page. Moderators and Administrators with the proper permissions can view topics that are set to be posted in the future in their respective forums. All permissions for using the future post feature and for viewing future topics can be set in the ACP for each individual forum/category on your board.]]></description>
+		<author-notes lang="en"><![CDATA[It is STRONGLY RECOMMENDED that you install this MOD with AutoMOD, if at all possible. This MOD's install file is built for compatibility, and thus has many in-line edits that could become confusing when installing it by hand. However, if you feel that you would rather install this MOD by hand, you may do so but please be careful and make backups of your board before installing. Special thanks to Phil at phpBB.com for laying the groundwork for this MOD which I picked up from him during development.]]></author-notes>
+		<author-group>
+			<author>
+				<realname><![CDATA[Tom Catullo]]></realname>
+				<username><![CDATA[Tom]]></username>
+				<homepage><![CDATA[http://www.cortello.com]]></homepage>
+				<email><![CDATA[tom@cortello.com]]></email>
+			</author>
+		</author-group>
+		<mod-version>0.0.1</mod-version>
+		<installation>
+			<level>intermediate</level>
+			<time>4500</time>
+			<target-version>3.0.7-PL1</target-version>
+		</installation>
+		<history>
+			<entry>
+				<date>2010-07-21</date>
+				<rev-version>0.0.1</rev-version>
+				<changelog lang="en">
+					<change><![CDATA[First beta release (Beta 1)]]></change>
+				</changelog>
+			</entry>
+		</history>
+		<link-group>
+			<link type="template" href="./contrib/subsilver2.xml" lang="en">subsilver2 Edits</link>
+		</link-group>
+	</header>
+	<action-group>
+		<copy>
+			<file from="root/install_future_posts.php" to="install_future_posts.php"/>
+			<file from="root/language/en/mods/umil_future_posts_mod.php" to="language/en/mods/umil_future_posts_mod.php"/>
+			<file from="root/styles/prosilver/imageset/icon_topic_future.gif" to="styles/prosilver/imageset/icon_topic_future.gif"/>
+			<file from="root/umil/*.*" to="umil/*.*"/>
+		</copy>
+		<open src="feed.php">
+			<edit>
+				<find><![CDATA[				AND topic_moved_id = 0]]></find>
+				<action type="after-add"><![CDATA[				AND topic_time <= ' . time() . ']]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[							AND u.user_id = p.poster_id',]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[							AND u.user_id = p.poster_id]]></inline-find>
+					<inline-remove><![CDATA[',]]></inline-remove>
+				</inline-edit>
+				<action type="after-add"><![CDATA[							AND p.post_time <= ' . time(),]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[				' . ((!$m_approve) ? 'AND topic_approved = 1' : '') . ']]></find>
+				<action type="after-add"><![CDATA[				AND topic_time <= ' . time() . ']]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[							AND p.post_time >= ' . $min_post_time . ']]></find>
+				<action type="after-add"><![CDATA[							AND p.post_time <= ' . time() . ']]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[			WHERE t.topic_id = ' . $this->topic_id;]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[			WHERE t.topic_id = ' . $this->topic_id]]></inline-find>
+					<inline-find><![CDATA[;]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[ . ']]></inline-action>
+				</inline-edit>
+				<action type="after-add"><![CDATA[				AND t.topic_time <= ' . time();]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[				AND topic_approved = 1]]></find>
+				<action type="after-add"><![CDATA[				AND topic_time <= ' . time() . ']]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[							AND ' . $db->sql_in_set('p.post_id', $post_ids),]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[							AND ' . $db->sql_in_set('p.post_id', $post_ids)]]></inline-find>
+					<inline-find><![CDATA[,]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[ . ']]></inline-action>
+				</inline-edit>
+				<action type="after-add"><![CDATA[							AND t.topic_time <= ' . time() . '
+							AND p.post_time <= ' . time(),]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[				AND topic_approved = 1]]></find>
+				<action type="after-add"><![CDATA[				AND topic_time <= ' . time() . ']]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[							AND ' . $db->sql_in_set('p.post_id', $post_ids),]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[							AND ' . $db->sql_in_set('p.post_id', $post_ids)]]></inline-find>
+					<inline-find><![CDATA[,]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[ . ']]></inline-action>
+				</inline-edit>
+				<action type="after-add"><![CDATA[							AND t.topic_time <= ' . time() . '
+							AND p.post_time <= ' . time(),]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[				AND topic_approved = 1]]></find>
+				<action type="after-add"><![CDATA[				AND topic_time <= ' . time() . ']]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[							AND ' . $db->sql_in_set('p.post_id', $post_ids),]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[							AND ' . $db->sql_in_set('p.post_id', $post_ids)]]></inline-find>
+					<inline-find><![CDATA[,]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[ . ']]></inline-action>
+				</inline-edit>
+				<action type="after-add"><![CDATA[							AND t.topic_time <= ' . time() . '
+							AND p.post_time <= ' . time(),]]></action>
+			</edit>
+		</open>
+		<open src="mcp.php">
+			<edit>
+				<find><![CDATA[				$sql .= 'AND topic_approved = 1';]]></find>
+				<action type="after-add"><![CDATA[			}
+			if (!$auth->acl_get('m_viewfp', $forum_id))
+			{
+				$sql .= 'AND (topic_time <= ' . time() . ' OR topic_poster = ' . $user->data['user_id'] . ')';]]></action>
+			</edit>
+		</open>
+		<open src="posting.php">
+			<edit>
+				<find><![CDATA[$user->setup(array('posting', 'mcp', 'viewtopic'), $post_data['forum_style']);]]></find>
+				<action type="after-add"><![CDATA[
+// Disallow replying to future topics that have not yet met their future post time
+if (($mode == 'reply' || $mode == 'quote' || $mode == 'bump') && $post_data['topic_time'] > $current_time)
+{
+	trigger_error(($mode == 'bump') ? 'BUMP_ERROR_FP' : 'NO_TOPIC');
+}]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[	$post_data['post_subject']		= utf8_normalize_nfc(request_var('subject', '', true));]]></find>
+				<action type="after-add"><![CDATA[	$post_data['future_post_time']	= utf8_normalize_nfc(request_var('future_post_time', '', true));]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[	$post_data['enable_sig']		= (!$config['allow_sig'] || !$auth->acl_get('f_sigs', $forum_id) || !$auth->acl_get('u_sig')) ? false : ((isset($_POST['attach_sig']) && $user->data['is_registered']) ? true : false);]]></find>
+				<action type="after-add"><![CDATA[
+	// Now we're going to work our magic for future posts
+	$post_time = (($auth->acl_get('f_future_post', $forum_id) && ($mode == 'post' || ($mode == 'edit' && $post_id == $post_data['topic_first_post_id'] && $post_data['post_time'] > time()))) ? (strtotime($post_data['future_post_time']) > time() ? strtotime($post_data['future_post_time']) : time()) : time());]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[				'post_time'				=> (isset($post_data['post_time'])) ? (int) $post_data['post_time'] : $current_time,]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[				'post_time'				=>]]></inline-find>
+					<inline-action type="after-add"><![CDATA[ ((isset($post_data['future_post_time'])) ? (int) $post_time :]]></inline-action>
+				</inline-edit>
+				<inline-edit>
+					<inline-find><![CDATA[ (isset($post_data['post_time'])) ? (int) $post_data['post_time'] : $current_time]]></inline-find>
+					<inline-action type="after-add"><![CDATA[)]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[			$redirect_url = submit_post($mode, $post_data['post_subject'], $post_data['username'], $post_data['topic_type'], $poll, $data, $update_message, ($update_message || $update_subject) ? true : false);]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[			$redirect_url = submit_post($mode, $post_data['post_subject'], $post_data['username'], $post_data['topic_type'], $poll, $data, $update_message, ($update_message || $update_subject) ? true : false]]></inline-find>
+					<inline-action type="after-add"><![CDATA[, ($post_time == time()) ? 0 : $post_time]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[	'SUBJECT'				=> $post_data['post_subject'],]]></find>
+				<action type="after-add"><![CDATA[	'FUTURE_POST_TIME'		=> ((!empty($post_data['future_post_time'])) ? ((!$submit && !$preview) ? $user->format_date($post_time) : $post_data['future_post_time']) : (($post_data['post_time'] && $mode == 'edit') ? $user->format_date($post_data['post_time']) : '')),]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[	'S_HIDDEN_FIELDS'		=> $s_hidden_fields)]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[	'S_HIDDEN_FIELDS'		=> $s_hidden_fields]]></inline-find>
+					<inline-find><![CDATA[)]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[,]]></inline-action>
+				</inline-edit>
+				<action type="after-add"><![CDATA[	'S_FUTURE_POST'			=> (($auth->acl_get('f_future_post', $forum_id) && ($mode == 'post' || ($mode == 'edit' && $post_id == $post_data['topic_first_post_id'] && $post_data['topic_time'] > time()))) ? true : false))]]></action>
+			</edit>
+		</open>
+		<open src="search.php">
+			<edit>
+				<find><![CDATA[		'NEWEST_POST_IMG'	=> $user->img('icon_topic_newest', 'VIEW_NEWEST_POST'),]]></find>
+				<action type="after-add"><![CDATA[		'FUTURE_IMG'		=> $user->img('icon_topic_future', 'TOPIC_FUTURE'),]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[				WHERE $sql_where";]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[				WHERE $sql_where]]></inline-find>
+					<inline-remove><![CDATA[";]]></inline-remove>
+				</inline-edit>
+				<action type="after-add"><![CDATA[					AND (t.topic_time <= " . time() . " OR t.topic_poster = " . $user->data['user_id'] . ")";]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[				WHERE $sql_where";]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[				WHERE $sql_where]]></inline-find>
+					<inline-remove><![CDATA[";]]></inline-remove>
+				</inline-edit>
+				<action type="after-add"><![CDATA[					AND (t.topic_time <= " . time() . " OR t.topic_poster = " . $user->data['user_id'] . ")";]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[					'S_TOPIC_GLOBAL'		=> (!$forum_id) ? true : false,]]></find>
+				<action type="after-add"><![CDATA[					'S_TOPIC_POST_FUTURE'	=> ($row['topic_time'] > time()) ? true : false,]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[					'U_POST_AUTHOR'			=> get_username_string('profile', $row['poster_id'], $row['username'], $row['user_colour'], $row['post_username']),]]></find>
+				<action type="after-add"><![CDATA[
+					'S_TOPIC_POST_FUTURE'	=> ($row['post_time'] > time()) ? true : false,]]></action>
+			</edit>
+		</open>
+		<open src="viewforum.php">
+			<edit>
+				<find><![CDATA[		" . (($auth->acl_get('m_approve', $forum_id)) ? '' : 'AND topic_approved = 1');]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[		" . (($auth->acl_get('m_approve', $forum_id)) ? '' : 'AND topic_approved = 1')]]></inline-find>
+					<inline-remove><![CDATA[;]]></inline-remove>
+				</inline-edit>
+				<action type="after-add"><![CDATA[		. (($auth->acl_get('m_viewfp', $forum_id)) ? '' : ' AND (topic_time <= ' . time() . ' OR topic_poster = ' . $user->data['user_id'] . ')');]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[	'FOLDER_MOVED_IMG'			=> $user->img('topic_moved', 'TOPIC_MOVED'),]]></find>
+				<action type="after-add"><![CDATA[	'FUTURE_IMG'				=> $user->img('icon_topic_future', 'TOPIC_FUTURE'),]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[			AND t.topic_type IN (' . POST_ANNOUNCE . ', ' . POST_GLOBAL . ')',]]></find>
+				<action type="replace-with"><![CDATA[			AND t.topic_type IN (' . POST_ANNOUNCE . ', ' . POST_GLOBAL . ')'
+							. (($auth->acl_get('m_viewfp', $forum_id)) ? '' : ' AND (topic_time <= ' . time() . ' OR topic_poster = ' . $user->data['user_id'] . ')'),]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[		$sql_limit_time]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[		$sql_limit_time]]></inline-find>
+					<inline-action type="after-add"><![CDATA[" .]]></inline-action>
+				</inline-edit>
+				<action type="after-add"><![CDATA[		(($auth->acl_get('m_viewfp', $forum_id)) ? '' : ' AND (topic_time <= ' . time() . ' OR topic_poster = ' . $user->data['user_id'] . ')') . "]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[		'WHERE'			=> $db->sql_in_set('t.topic_id', $topic_list),]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[		'WHERE'			=> $db->sql_in_set('t.topic_id', $topic_list)]]></inline-find>
+					<inline-action type="after-add"><![CDATA[ . (($auth->acl_get('m_viewfp']]></inline-action>
+				</inline-edit>
+				<inline-edit>
+					<inline-find><![CDATA[,]]></inline-find>
+					<inline-action type="after-add"><![CDATA[ $forum_id)) ? '' : ' AND (topic_time <= ' . time() . ' OR topic_poster = ' . $user->data['user_id'] . ')'),]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[			'S_TOPIC_TYPE_SWITCH'	=> ($s_type_switch == $s_type_switch_test) ? -1 : $s_type_switch_test)]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[			'S_TOPIC_TYPE_SWITCH'	=> ($s_type_switch == $s_type_switch_test) ? -1 : $s_type_switch_test]]></inline-find>
+					<inline-find><![CDATA[)]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[,]]></inline-action>
+				</inline-edit>
+				<action type="after-add"><![CDATA[			'S_TOPIC_POST_FUTURE'	=> ($row['topic_time'] > time()) ? true : false,]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[		);]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[		)]]></inline-find>
+					<inline-action type="after-add"><![CDATA[)]]></inline-action>
+				</inline-edit>
+			</edit>
+		</open>
+		<open src="viewtopic.php">
+			<edit>
+				<find><![CDATA[					" . (($auth->acl_get('m_approve', $row['forum_id'])) ? '' : 'AND topic_approved = 1') . "]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[					" . (($auth->acl_get('m_approve', $row['forum_id'])) ? '' : 'AND topic_approved = 1')]]></inline-find>
+					<inline-remove><![CDATA[ . "]]></inline-remove>
+				</inline-edit>
+				<action type="after-add"><![CDATA[					. (($auth->acl_get('m_viewfp', $forum_id)) ? '' : ' AND (topic_time <= ' . time() . ' OR topic_poster = ' . $user->data['user_id'] . ')') . "]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[$forum_id = (int) $topic_data['forum_id'];]]></find>
+				<action type="after-add"><![CDATA[
+// Disallow viewing of future topics that have not yet met their future post time (only topic authors and moderators can view them)
+if ($topic_data['topic_time'] > time() && $topic_data['topic_poster'] != $user->data['user_id'] && !$auth->acl_get('m_viewfp', $forum_id))
+{
+	trigger_error('NO_TOPIC');
+}
+]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[if (($config['email_enable'] || $config['jab_enable']) && $config['allow_topic_notify'] && $user->data['is_registered'])
+{]]></find>
+				<action type="after-add"><![CDATA[	if ($topic_data['topic_time'] <= time() || $auth->acl_get('m_viewfp', $forum_id) || $user->data['user_id'] == $topic_data['topic_poster'])
+	{]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[	if ($config['allow_forum_notify'] && $auth->acl_get('f_subscribe', $forum_id))]]></find>
+				<action type="after-add"><![CDATA[		{
+			$s_watching_forum = $s_watching_topic;
+			watch_topic_forum('forum', $s_watching_forum, $user->data['user_id'], $forum_id, 0);
+		}
+	}
+	else]]></action>
+			</edit>
+			<edit>
+				<remove><![CDATA[		$s_watching_forum = $s_watching_topic;]]></remove>
+			</edit>
+			<edit>
+				<find><![CDATA[		watch_topic_forum('forum', $s_watching_forum, $user->data['user_id'], $forum_id, 0);]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[watch_topic_forum]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[trigger_error]]></inline-action>
+				</inline-edit>
+				<inline-edit>
+					<inline-find><![CDATA[(']]></inline-find>
+					<inline-find><![CDATA[forum]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[NO_TOPIC]]></inline-action>
+				</inline-edit>
+				<inline-edit>
+					<inline-find><![CDATA[, $s_watching_forum, $user->data['user_id'], $forum_id, 0]]></inline-find>
+					<inline-action type="replace-with"/>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[	if (check_link_hash(request_var('hash', ''), "topic_$topic_id"))]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[	if (]]></inline-find>
+					<inline-find><![CDATA[check_link_hash]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[$topic_data['topic_time'] <= time]]></inline-action>
+				</inline-edit>
+				<inline-edit>
+					<inline-find><![CDATA[(]]></inline-find>
+					<inline-find><![CDATA[request_var]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[) || $auth->acl_get]]></inline-action>
+				</inline-edit>
+				<inline-edit>
+					<inline-find><![CDATA[(']]></inline-find>
+					<inline-find><![CDATA[hash]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[m_viewfp]]></inline-action>
+				</inline-edit>
+				<inline-edit>
+					<inline-find><![CDATA[', ]]></inline-find>
+					<inline-action type="after-add"><![CDATA[$forum_id) || $user->data[]]></inline-action>
+				</inline-edit>
+				<inline-edit>
+					<inline-find><![CDATA['']]></inline-find>
+					<inline-action type="replace-with"><![CDATA['user_id'] == $topic_data['topic_poster']]]></inline-action>
+				</inline-edit>
+				<inline-edit>
+					<inline-find><![CDATA[), "topic_$topic_id"))]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[)]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[		if (!$topic_data['bookmarked'])]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[		if (]]></inline-find>
+					<inline-find><![CDATA[!$topic_data[]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[check_link_hash(request_var(]]></inline-action>
+				</inline-edit>
+				<inline-edit>
+					<inline-find><![CDATA[bookmarked]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[hash]]></inline-action>
+				</inline-edit>
+				<inline-edit>
+					<inline-find><![CDATA[']]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[', '']]></inline-action>
+				</inline-edit>
+				<inline-edit>
+					<inline-find><![CDATA[)]]></inline-find>
+					<inline-action type="after-add"><![CDATA[, "topic_$topic_id"))]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[		{]]></find>
+				<action type="after-add"><![CDATA[			if (!$topic_data['bookmarked'])
+			{]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[			$db->sql_query($sql);]]></find>
+				<action type="after-add"><![CDATA[			}
+			else
+			{
+				$sql = 'DELETE FROM ' . BOOKMARKS_TABLE . "
+					WHERE user_id = {$user->data['user_id']}
+						AND topic_id = $topic_id";
+				$db->sql_query($sql);
+			}
+			$message = (($topic_data['bookmarked']) ? $user->lang['BOOKMARK_REMOVED'] : $user->lang['BOOKMARK_ADDED']) . '<br /><br />' . sprintf($user->lang['RETURN_TOPIC'], '<a href="' . $viewtopic_url . '">', '</a>');]]></action>
+			</edit>
+			<edit>
+				<remove><![CDATA[			$sql = 'DELETE FROM ' . BOOKMARKS_TABLE . "]]></remove>
+			</edit>
+			<edit>
+				<find><![CDATA[				WHERE user_id = {$user->data['user_id']}]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[	WHERE user_id]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[$message]]></inline-action>
+				</inline-edit>
+				<inline-edit>
+					<inline-find><![CDATA[ = {]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[ = ]]></inline-action>
+				</inline-edit>
+				<inline-edit>
+					<inline-find><![CDATA[$user->]]></inline-find>
+					<inline-find><![CDATA[data]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[lang]]></inline-action>
+				</inline-edit>
+				<inline-edit>
+					<inline-find><![CDATA[[']]></inline-find>
+					<inline-find><![CDATA[user_id]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[BOOKMARK_ERR]]></inline-action>
+				</inline-edit>
+				<inline-edit>
+					<inline-find><![CDATA[']]]></inline-find>
+					<inline-find><![CDATA[}]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[ . '<br /><br />' . sprintf($user->lang['RETURN_TOPIC'], '<a href="' . $viewtopic_url . '">', '</a>');]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<remove><![CDATA[					AND topic_id = $topic_id";
+			$db->sql_query($sql);]]></remove>
+			</edit>
+			<edit>
+				<find><![CDATA[		$message = (($topic_data['bookmarked']) ? $user->lang['BOOKMARK_REMOVED'] : $user->lang['BOOKMARK_ADDED']) . '<br /><br />' . sprintf($user->lang['RETURN_TOPIC'], '<a href="' . $viewtopic_url . '">', '</a>');]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[$message = ]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[meta_refresh]]></inline-action>
+				</inline-edit>
+				<inline-edit>
+					<inline-find><![CDATA[(]]></inline-find>
+					<inline-find><![CDATA[($topic_data['bookmarked']) ? $user->lang['BOOKMARK_REMOVED'] : $user->lang['BOOKMARK_ADDED']) . '<br /><br />' . sprintf($user->lang['RETURN_TOPIC']]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[3]]></inline-action>
+				</inline-edit>
+				<inline-edit>
+					<inline-find><![CDATA[, '<a href="' . ]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[, ]]></inline-action>
+				</inline-edit>
+				<inline-edit>
+					<inline-find><![CDATA[$viewtopic_url . '">', '</a>']]></inline-find>
+					<inline-action type="replace-with"><![CDATA[$viewtopic_url]]></inline-action>
+				</inline-edit>
+				<action type="after-add"><![CDATA[		trigger_error($message);]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[		$message = $user->lang['BOOKMARK_ERR'] . '<br /><br />' . sprintf($user->lang['RETURN_TOPIC'], '<a href="' . $viewtopic_url . '">', '</a>');]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[$message = $user->lang[]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[trigger_error(]]></inline-action>
+				</inline-edit>
+				<inline-edit>
+					<inline-find><![CDATA['BOOKMARK_ERR'] . '<br /><br />' . sprintf($user->lang['RETURN_TOPIC'], '<a href="' . $viewtopic_url . '">', '</a>]]></inline-find>
+					<inline-action type="replace-with"><![CDATA['NO_TOPIC]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<remove><![CDATA[	meta_refresh(3, $viewtopic_url);
+
+	trigger_error($message);]]></remove>
+			</edit>
+			<edit>
+				<find><![CDATA[	'JABBER_IMG'		=> $user->img('icon_contact_jabber', 'JABBER') ,]]></find>
+				<action type="after-add"><![CDATA[	'FUTURE_IMG'		=> $user->img('icon_topic_future', 'POST_FUTURE'),]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[		'S_TOPIC_POSTER'	=> ($topic_data['topic_poster'] == $poster_id) ? true : false,]]></find>
+				<action type="after-add"><![CDATA[		'S_TOPIC_POST_FUTURE'	=> ($row['post_time'] > time()) ? true : false,]]></action>
+			</edit>
+		</open>
+		<open src="includes/functions.php">
+			<edit>
+				<find><![CDATA[		$last_mark = $user->data['user_lastmark'];]]></find>
+				<action type="after-add"><![CDATA[		$current_time = time();]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[				(tt.mark_time IS NULL AND ft.mark_time IS NULL AND t.topic_last_post_time > $last_mark)
+				)]]></find>
+				<action type="after-add"><![CDATA[				AND t.topic_time <= $current_time]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[					AND t.topic_last_post_time > ' . $mark_time_forum . ']]></find>
+				<action type="after-add"><![CDATA[					AND t.topic_last_post_time <= ' . time() . ']]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[					AND topic_last_post_time > ' . $mark_time_forum . ']]></find>
+				<action type="after-add"><![CDATA[					AND topic_last_post_time <= ' . time() . ']]></action>
+			</edit>
+		</open>
+		<open src="includes/functions_display.php">
+			<edit>
+				<find><![CDATA[	foreach ($forum_rows as $row)
+	{]]></find>
+				<action type="after-add"><![CDATA[		// Exclude future topics from being listed as the last post for a forum
+		$row = check_future_date($row);
+]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[		$forum_unread = (isset($forum_tracking_info[$forum_id]) && $row['orig_forum_last_post_time'] > $forum_tracking_info[$forum_id]) ? true : false;]]></find>
+				<action type="after-add"><![CDATA[
+		if ($forum_unread && has_future_posts($forum_id) && !new_present_posts($forum_id, $forum_tracking_info[$forum_id]))
+		{
+			$forum_unread = false;
+		}]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[				$subforum_unread = (isset($forum_tracking_info[$subforum_id]) && $subforum_row['orig_forum_last_post_time'] > $forum_tracking_info[$subforum_id]) ? true : false;]]></find>
+				<action type="after-add"><![CDATA[
+				if ($subforum_unread && has_future_posts($subforum_id) && !new_present_posts($subforum_id, $forum_tracking_info[$subforum_id]))
+				{
+					$subforum_unread = false;
+				}]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[							$subforum_unread = true;]]></find>
+				<action type="after-add"><![CDATA[
+							if ($subforum_unread && has_future_posts($child_id) && !new_present_posts($subforum_id, $forum_tracking_info[$child_id]))
+							{
+								$subforum_unread = false;
+							}]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[	return '<img src="' . (str_replace(' ', '%20', $avatar_img)) . '" width="' . $avatar_width . '" height="' . $avatar_height . '" alt="' . ((!empty($user->lang[$alt])) ? $user->lang[$alt] : $alt) . '" />';
+}]]></find>
+				<action type="after-add"><![CDATA[/**
+* Get the true last post information for a forum (excluding future topics)
+*
+* @param array $old_row Original 'last post' information for a forum
+*
+* @return array The true last post information for a forum
+*/
+function check_future_date(&$old_row)
+{
+	global $db;
+
+	$forum_ids_collector = $true_row = array();
+
+	// Get forum_id's of all subforums of the forum being checked
+	$sql = 'SELECT forum_id
+		FROM ' . FORUMS_TABLE . '
+		WHERE (left_id > ' . (int) $old_row['left_id'] . '
+			AND right_id < ' . (int) $old_row['right_id'] . ')
+			OR forum_id = ' . (int) $old_row['forum_id'];
+	$result = $db->sql_query($sql);
+	$forum_ids = $db->sql_fetchrowset($result);
+	$db->sql_freeresult($result);
+
+	// Place all selected forum_ids in one array
+	foreach($forum_ids as $id)
+	{
+		$forum_ids_collector[] = $id['forum_id'];
+	}
+
+	// Get the latest post out of all these forums combined
+	$sql = 'SELECT topic_last_post_id, topic_last_post_subject, topic_last_post_time, topic_last_poster_id, topic_last_poster_name, topic_last_poster_colour
+		FROM ' . TOPICS_TABLE . '
+		WHERE ' . $db->sql_in_set('forum_id', $forum_ids_collector) . '
+			AND topic_last_post_time <= ' . time() . '
+			AND topic_approved = 1
+		ORDER BY topic_last_post_time DESC';
+	$result = $db->sql_query_limit($sql, 1);
+	$row = $db->sql_fetchrow($result);
+	$db->sql_freeresult($result);
+
+	$true_row['forum_last_post_id'] = $row['topic_last_post_id'];
+	$true_row['forum_last_post_subject'] = $row['topic_last_post_subject'];
+	$true_row['forum_last_post_time'] = $row['topic_last_post_time'];
+	$true_row['forum_last_poster_id'] = $row['topic_last_poster_id'];
+	$true_row['forum_last_poster_name'] = $row['topic_last_poster_name'];
+	$true_row['forum_last_poster_colour'] = $row['topic_last_poster_colour'];
+
+	$final_row = array_merge($old_row, $true_row);
+
+	return $final_row;
+}
+
+/**
+* Check to see if a specific forum contains future posts
+*
+* @param int $forum_id Forum_id of the forum to be checked
+*
+* @return bool Does the forum contain future posts?
+*/
+function has_future_posts($forum_id)
+{
+	global $db;
+
+	$sql = 'SELECT post_id
+		FROM ' . POSTS_TABLE . '
+		WHERE forum_id = ' . (int) $forum_id . '
+			AND post_time > ' . time();
+	$result = $db->sql_query_limit($sql, 1);
+	$row = $db->sql_fetchrow($result);
+	$db->sql_freeresult($result);
+
+	if ($row)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+/**
+* Check to see if there is an unread post in a forum for the current user that is NOT a future post
+*
+* @param int $forum_id Forum_id of the forum to be checked
+* @param int $mark_time Last time the current user viewed a post in the forum
+*
+* @return bool Does the forum contain any new 'present' posts for this user?
+*/
+function new_present_posts($forum_id, $mark_time)
+{
+	global $db;
+
+	$sql = 'SELECT post_id
+		FROM ' . POSTS_TABLE . '
+		WHERE forum_id = ' . (int) $forum_id . '
+			AND post_time > ' . (int) $mark_time . '
+			AND post_time <= ' . time();
+	$result = $db->sql_query_limit($sql, 1);
+	$row = $db->sql_fetchrow($result);
+	$db->sql_freeresult($result);
+
+	if ($row)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}]]></action>
+			</edit>
+		</open>
+		<open src="includes/functions_posting.php">
+			<edit>
+				<find><![CDATA[function submit_post($mode, $subject, $username, $topic_type, &$poll, &$data, $update_message = true, $update_search_index = true)]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[function submit_post($mode, $subject, $username, $topic_type, &$poll, &$data, $update_message = true, $update_search_index = true]]></inline-find>
+					<inline-action type="after-add"><![CDATA[, $post_time = 0]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[	$current_time = time();]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[	$current_time = ]]></inline-find>
+					<inline-action type="after-add"><![CDATA[($post_time < 1) ? ]]></inline-action>
+				</inline-edit>
+				<inline-edit>
+					<inline-find><![CDATA[time()]]></inline-find>
+					<inline-action type="after-add"><![CDATA[ : $post_time]]></inline-action>
+				</inline-edit>
+				<action type="after-add"><![CDATA[	$future_post = ($current_time > time()) ? true : false;]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[					'post_edit_time'	=> $current_time,]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[					'post_edit_time'	=> ]]></inline-find>
+					<inline-find><![CDATA[$current_time]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[time()]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[				'post_subject'		=> $subject,]]></find>
+				<action type="after-add"><![CDATA[				'post_time'			=> ($post_time && $post_time <> $data['post_time']) ? (int) $post_time : $data['post_time'],]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[		unset($sql_data[POSTS_TABLE]['sql']);]]></find>
+				<action type="after-add"><![CDATA[	}
+
+	if ($mode == 'edit' && $post_time && $post_time <> $data['post_time'])
+	{
+		$sql_data[TOPICS_TABLE]['sql'] = array(
+			'topic_time'				=> (int) $post_time,
+			'topic_last_post_time'		=> (int) $post_time,
+		);]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[		{
+			set_config_count('num_posts', 1, true);
+		}]]></find>
+				<action type="after-add"><![CDATA[	}
+
+	// Set correct last_post information for the forum if the time was editied for a future post
+	if ($mode == 'edit' && $post_time && $post_time <> $data['post_time'])
+	{
+		$sql_data[FORUMS_TABLE]['stat'][] = 'forum_last_post_time = ' . (int) $post_time;]]></action>
+			</edit>
+			<edit>
+				<remove><![CDATA[	// Topic Notification, do not change if moderator is changing other users posts...]]></remove>
+			</edit>
+			<edit>
+				<find><![CDATA[	if ($user->data['user_id'] == $poster_id)]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[	if (]]></inline-find>
+					<inline-find><![CDATA[$user->data['user_id']]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[($post_time]]></inline-action>
+				</inline-edit>
+				<inline-edit>
+					<inline-find><![CDATA[=]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[&& $post_time <]]></inline-action>
+				</inline-edit>
+				<inline-edit>
+					<inline-find><![CDATA[= ]]></inline-find>
+					<inline-find><![CDATA[$poster_id]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[time(]]></inline-action>
+				</inline-edit>
+				<inline-edit>
+					<inline-find><![CDATA[)]]></inline-find>
+					<inline-action type="after-add"><![CDATA[) || !$post_time)]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[	{]]></find>
+				<action type="after-add"><![CDATA[		// Topic Notification, do not change if moderator is changing other users posts...]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[		if (!$data['notify_set'] && $data['notify'])]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[		if (]]></inline-find>
+					<inline-find><![CDATA[!$data]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[$user->data]]></inline-action>
+				</inline-edit>
+				<inline-edit>
+					<inline-find><![CDATA[[']]></inline-find>
+					<inline-find><![CDATA[notify_set]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[user_id]]></inline-action>
+				</inline-edit>
+				<inline-edit>
+					<inline-find><![CDATA['] ]]></inline-find>
+					<inline-find><![CDATA[&&]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[==]]></inline-action>
+				</inline-edit>
+				<inline-edit>
+					<inline-find><![CDATA[$data['notify']]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[$poster_id]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[		{]]></find>
+				<action type="after-add"><![CDATA[			if (!$data['notify_set'] && $data['notify'])
+			{]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[			$db->sql_query($sql);]]></find>
+				<action type="after-add"><![CDATA[			}
+			else if (($config['email_enable'] || $config['jab_enable']) && $data['notify_set'] && !$data['notify'])
+			{
+				$sql = 'DELETE FROM ' . TOPICS_WATCH_TABLE . '
+					WHERE user_id = ' . $user->data['user_id'] . '
+						AND topic_id = ' . $data['topic_id'];
+				$db->sql_query($sql);
+			}]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[		else if (($config['email_enable'] || $config['jab_enable']) && $data['notify_set'] && !$data['notify'])]]></find>
+				<inline-edit>
+					<inline-remove><![CDATA[else ]]></inline-remove>
+				</inline-edit>
+				<inline-edit>
+					<inline-find><![CDATA[if (]]></inline-find>
+					<inline-find><![CDATA[($config[]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[$mode == ]]></inline-action>
+				</inline-edit>
+				<inline-edit>
+					<inline-find><![CDATA['email_enable]]></inline-find>
+					<inline-action type="replace-with"><![CDATA['post]]></inline-action>
+				</inline-edit>
+				<inline-edit>
+					<inline-find><![CDATA[']]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[']]></inline-action>
+				</inline-edit>
+				<inline-edit>
+					<inline-find><![CDATA[ || ]]></inline-find>
+					<inline-find><![CDATA[$config[]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[$mode == ]]></inline-action>
+				</inline-edit>
+				<inline-edit>
+					<inline-find><![CDATA['jab_enable]]></inline-find>
+					<inline-action type="replace-with"><![CDATA['reply]]></inline-action>
+				</inline-edit>
+				<inline-edit>
+					<inline-find><![CDATA[']]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[' || $mode == 'quote']]></inline-action>
+				</inline-edit>
+				<inline-edit>
+					<inline-find><![CDATA[) && $data['notify_set'] && !$data['notify'])]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[)]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<remove><![CDATA[			$sql = 'DELETE FROM ' . TOPICS_WATCH_TABLE . '
+				WHERE user_id = ' . $user->data['user_id'] . ']]></remove>
+			</edit>
+			<edit>
+				<find><![CDATA[					AND topic_id = ' . $data['topic_id'];]]></find>
+				<action type="replace-with"><![CDATA[			// Mark this topic as posted to]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[			$db->sql_query($sql);]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[$db->sql_query]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[markread]]></inline-action>
+				</inline-edit>
+				<inline-edit>
+					<inline-find><![CDATA[(]]></inline-find>
+					<inline-find><![CDATA[$sql]]></inline-find>
+					<inline-action type="replace-with"><![CDATA['post', $data['forum_id'], $data['topic_id'], $data['post_time']]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<remove><![CDATA[	}]]></remove>
+			</edit>
+			<edit>
+				<remove><![CDATA[	if ($mode == 'post' || $mode == 'reply' || $mode == 'quote')
+	{
+		// Mark this topic as posted to
+		markread('post', $data['forum_id'], $data['topic_id'], $data['post_time']);
+	}
+]]></remove>
+			</edit>
+			<edit>
+				<remove><![CDATA[	//
+	if ($config['load_db_lastread'] && $user->data['is_registered'])
+	{
+		$sql = 'SELECT mark_time
+			FROM ' . FORUMS_TRACK_TABLE . '
+			WHERE user_id = ' . $user->data['user_id'] . '
+				AND forum_id = ' . (($topic_type == POST_GLOBAL) ? 0 : $data['forum_id']);
+		$result = $db->sql_query($sql);
+		$f_mark_time = (int) $db->sql_fetchfield('mark_time');
+		$db->sql_freeresult($result);
+	}
+	else if ($config['load_anon_lastread'] || $user->data['is_registered'])
+	{
+		$f_mark_time = false;
+	}
+
+	if (($config['load_db_lastread'] && $user->data['is_registered']) || $config['load_anon_lastread'] || $user->data['is_registered'])
+	{]]></remove>
+			</edit>
+			<edit>
+				<find><![CDATA[		// Update forum info]]></find>
+				<action type="replace-with"><![CDATA[		//]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[		if ($topic_type == POST_GLOBAL)]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[		if (]]></inline-find>
+					<inline-find><![CDATA[$topic_type]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[$config['load_db_lastread']]]></inline-action>
+				</inline-edit>
+				<inline-edit>
+					<inline-find><![CDATA[==]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[&&]]></inline-action>
+				</inline-edit>
+				<inline-edit>
+					<inline-find><![CDATA[POST_GLOBAL]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[$user->data['is_registered']]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[			$sql = 'SELECT MAX(topic_last_post_time) as forum_last_post_time]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[			$sql = 'SELECT ]]></inline-find>
+					<inline-find><![CDATA[MAX(topic_last_post_time) as forum_last_post_time]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[mark_time]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[				FROM ' . TOPICS_TABLE . ']]></find>
+				<inline-edit>
+					<inline-find><![CDATA[				FROM ' . ]]></inline-find>
+					<inline-find><![CDATA[TOPICS_TABLE]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[FORUMS_TRACK_TABLE]]></inline-action>
+				</inline-edit>
+				<action type="after-add"><![CDATA[				WHERE user_id = ' . $user->data['user_id'] . ']]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[				WHERE forum_id = 0';]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[WHERE]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[	AND]]></inline-action>
+				</inline-edit>
+				<inline-edit>
+					<inline-find><![CDATA[ forum_id = ]]></inline-find>
+					<inline-action type="after-add"><![CDATA[' . (($topic_type == POST_GLOBAL) ? ]]></inline-action>
+				</inline-edit>
+				<inline-edit>
+					<inline-find><![CDATA[0']]></inline-find>
+					<inline-action type="replace-with"><![CDATA[0 : $data['forum_id'])]]></inline-action>
+				</inline-edit>
+				<action type="after-add"><![CDATA[			$result = $db->sql_query($sql);
+			$f_mark_time = (int) $db->sql_fetchfield('mark_time');
+			$db->sql_freeresult($result);]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[		else]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[		else]]></inline-find>
+					<inline-action type="after-add"><![CDATA[ if ($config['load_anon_lastread'] || $user->data['is_registered'])]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<remove><![CDATA[			$sql = 'SELECT forum_last_post_time
+				FROM ' . FORUMS_TABLE . ']]></remove>
+			</edit>
+			<edit>
+				<find><![CDATA[				WHERE forum_id = ' . $data['forum_id'];]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[	WHERE forum_id]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[$f_mark_time]]></inline-action>
+				</inline-edit>
+				<inline-edit>
+					<inline-find><![CDATA[ = ]]></inline-find>
+					<inline-find><![CDATA[' . $data['forum_id']]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[false]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<remove><![CDATA[		$result = $db->sql_query($sql);
+		$forum_last_post_time = (int) $db->sql_fetchfield('forum_last_post_time');
+		$db->sql_freeresult($result);]]></remove>
+			</edit>
+			<edit>
+				<find><![CDATA[		update_forum_tracking_info((($topic_type == POST_GLOBAL) ? 0 : $data['forum_id']), $forum_last_post_time, $f_mark_time, false);]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[update_forum_tracking_info]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[if ]]></inline-action>
+				</inline-edit>
+				<inline-edit>
+					<inline-find><![CDATA[((]]></inline-find>
+					<inline-find><![CDATA[($topic_type == POST_GLOBAL) ? 0 : $data]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[$config]]></inline-action>
+				</inline-edit>
+				<inline-edit>
+					<inline-find><![CDATA[[']]></inline-find>
+					<inline-find><![CDATA[forum_id]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[load_db_lastread'] && $user->data['is_registered]]></inline-action>
+				</inline-edit>
+				<inline-edit>
+					<inline-find><![CDATA[']),]]></inline-find>
+					<inline-action type="replace-with"><![CDATA['])]]></inline-action>
+				</inline-edit>
+				<inline-edit>
+					<inline-find><![CDATA[$forum_last_post_time,]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[||]]></inline-action>
+				</inline-edit>
+				<inline-edit>
+					<inline-find><![CDATA[$f_mark_time,]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[$config['load_anon_lastread']]]></inline-action>
+				</inline-edit>
+				<inline-edit>
+					<inline-find><![CDATA[false]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[|| $user->data['is_registered']]]></inline-action>
+				</inline-edit>
+				<inline-edit>
+					<inline-find><![CDATA[);]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[)]]></inline-action>
+				</inline-edit>
+				<action type="after-add"><![CDATA[		{
+			// Update forum info
+			if ($topic_type == POST_GLOBAL)
+			{
+				$sql = 'SELECT MAX(topic_last_post_time) as forum_last_post_time
+					FROM ' . TOPICS_TABLE . '
+					WHERE forum_id = 0';]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[	}]]></find>
+				<action type="after-add"><![CDATA[			else
+			{
+				// Get the latest post from this forum (excluding future posts)
+				$sql = 'SELECT topic_last_post_time
+					FROM ' . TOPICS_TABLE . '
+					WHERE ' . $data['forum_id'] . '
+						AND topic_last_post_time <= ' . time() . '
+						AND topic_approved = 1
+					ORDER BY topic_last_post_time DESC';
+				$result = $db->sql_query_limit($sql, 1);
+				$row = $db->sql_fetchrow($result);
+				$db->sql_freeresult($result);
+
+				$forum_last_post_time = $row['topic_last_post_time'];
+			}
+			if (empty($forum_last_post_time))
+			{
+				$result = $db->sql_query($sql);
+				$forum_last_post_time = (int) $db->sql_fetchfield('forum_last_post_time');
+				$db->sql_freeresult($result);
+			}
+
+			update_forum_tracking_info((($topic_type == POST_GLOBAL) ? 0 : $data['forum_id']), $forum_last_post_time, $f_mark_time, false);
+		}
+]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[	if ($mode != 'edit' && $mode != 'delete' && $post_approval)]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[	if ($mode != 'edit' && $mode != 'delete' && $post_approval]]></inline-find>
+					<inline-action type="before-add"><![CDATA[	]]></inline-action>
+					<inline-action type="after-add"><![CDATA[ && (($post_time && $post_time <= time(]]></inline-action>
+				</inline-edit>
+				<inline-edit>
+					<inline-find><![CDATA[)]]></inline-find>
+					<inline-action type="after-add"><![CDATA[) || !$post_time))]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[		user_notification($mode, $subject, $data['topic_title'], $data['forum_name'], $data['forum_id'], $data['topic_id'], $data['post_id']);]]></find>
+				<action type="after-add"><![CDATA[		}]]></action>
+			</edit>
+		</open>
+		<open src="includes/acp/acp_styles.php">
+			<edit>
+				<find><![CDATA[				'icon_post_target', 'icon_post_target_unread', 'icon_topic_attach', 'icon_topic_latest', 'icon_topic_newest', 'icon_topic_reported', 'icon_topic_unapproved', 'icon_friend', 'icon_foe',]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[				'icon_post_target', 'icon_post_target_unread', 'icon_topic_attach]]></inline-find>
+					<inline-action type="after-add"><![CDATA[', 'icon_topic_future]]></inline-action>
+				</inline-edit>
+			</edit>
+		</open>
+		<open src="includes/mcp/mcp_forum.php">
+			<edit>
+				<find><![CDATA[			" . (($auth->acl_get('m_approve', $forum_id)) ? '' : 'AND t.topic_approved = 1') . "]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[			" . (($auth->acl_get('m_approve', $forum_id)) ? '' : 'AND t.topic_approved = 1')]]></inline-find>
+					<inline-remove><![CDATA[ . "]]></inline-remove>
+				</inline-edit>
+				<action type="after-add"><![CDATA[			. (($auth->acl_get('m_viewfp', $forum_id)) ? '' : ' AND (topic_time <= ' . time() . ' OR topic_poster = ' . $user->data['user_id'] . ')') . "]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[			'UNAPPROVED_IMG'		=> ($topic_unapproved || $posts_unapproved) ? $user->img('icon_topic_unapproved', ($topic_unapproved) ? 'TOPIC_UNAPPROVED' : 'POSTS_UNAPPROVED') : '',]]></find>
+				<action type="after-add"><![CDATA[			'FUTURE_IMG'			=> $user->img('icon_topic_future', 'TOPIC_FUTURE'),]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[			'S_UNREAD_TOPIC'		=> $unread_topic,]]></find>
+				<action type="after-add"><![CDATA[			'S_TOPIC_POST_FUTURE'	=> ($row['topic_time'] > time()) ? true : false,]]></action>
+			</edit>
+		</open>
+		<open src="includes/mcp/mcp_front.php">
+			<edit>
+				<find><![CDATA[					AND post_approved = 0';]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[					AND post_approved = 0']]></inline-find>
+					<inline-find><![CDATA[;]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[ . ]]></inline-action>
+				</inline-edit>
+				<action type="after-add"><![CDATA[					(($auth->acl_get('m_viewfp', $forum_id) || empty($forum_id)) ? '' : ' AND (post_time <= ' . time() . ' OR poster_id = ' . $user->data['user_id'] . ')');]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[						AND post_approved = 0]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[						AND post_approved = 0]]></inline-find>
+					<inline-action type="after-add"><![CDATA[' . ]]></inline-action>
+				</inline-edit>
+				<action type="after-add"><![CDATA[						(($auth->acl_get('m_viewfp', $forum_id) || empty($forum_id)) ? '' : ' AND (post_time <= ' . time() . ' OR poster_id = ' . $user->data['user_id'] . ')') . ']]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[						AND p.poster_id = u.user_id]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[						AND p.poster_id = u.user_id]]></inline-find>
+					<inline-action type="after-add"><![CDATA[' . ]]></inline-action>
+				</inline-edit>
+				<action type="after-add"><![CDATA[						(($auth->acl_get('m_viewfp', $forum_id) || empty($forum_id)) ? '' : ' AND (p.post_time <= ' . time() . ' OR p.poster_id = ' . $user->data['user_id'] . ')') . ']]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[						'POST_TIME'		=> $user->format_date($row['post_time']))]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[						'POST_TIME'		=> $user->format_date($row['post_time'])]]></inline-find>
+					<inline-find><![CDATA[)]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[,]]></inline-action>
+				</inline-edit>
+				<action type="after-add"><![CDATA[						'FUTURE_IMG'	=> $user->img('icon_topic_future', 'POST_FUTURE'),
+
+						'S_TOPIC_POST_FUTURE'	=> ($row['post_time'] > time()) ? true : false)]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[						'POST_TIME'		=> $user->format_date($row['post_time']),]]></find>
+				<action type="after-add"><![CDATA[						'FUTURE_IMG'	=> $user->img('icon_topic_future', 'POST_FUTURE'),
+
+						'S_TOPIC_POST_FUTURE'	=> ($row['post_time'] > time()) ? true : false]]></action>
+			</edit>
+		</open>
+		<open src="includes/mcp/mcp_queue.php">
+			<edit>
+				<find><![CDATA[					'S_POST_LOCKED'			=> $post_info['post_edit_locked'],]]></find>
+				<action type="after-add"><![CDATA[					'S_TOPIC_POST_FUTURE'	=> ($post_info['post_time'] > time()) ? true : false,]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[					'EDIT_IMG'				=> $user->img('icon_post_edit', $user->lang['EDIT_POST']),]]></find>
+				<action type="after-add"><![CDATA[					'FUTURE_IMG'			=> $user->img('icon_topic_future', 'POST_FUTURE'),]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[					$sql = 'SELECT p.post_id]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[					$sql = 'SELECT p.post_id]]></inline-find>
+					<inline-action type="after-add"><![CDATA[, p.forum_id, p.post_time]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[					{]]></find>
+				<action type="after-add"><![CDATA[						if (($row['post_time'] > time() && $auth->acl_get('m_viewfp', $row['forum_id'])) || $row['post_time'] <= time())
+						{]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[						$row_num[$row['post_id']] = $i++;]]></find>
+				<action type="after-add"><![CDATA[						}
+						else
+						{
+							continue;
+						}]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[								AND u.user_id = p.poster_id]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[								AND u.user_id = p.poster_id]]></inline-find>
+					<inline-action type="after-add"><![CDATA[ ' .]]></inline-action>
+				</inline-edit>
+				<action type="after-add"><![CDATA[								(($auth->acl_get('m_viewfp', $forum_list)) ? '' : ' AND (t.topic_time <= ' . time() . ' OR t.topic_poster = ' . $user->data['user_id'] . ')') . ']]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[						if ($row['forum_id'])]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[						if (]]></inline-find>
+					<inline-action type="after-add"><![CDATA[($row['post_time'] > time() && $auth->acl_get('m_viewfp', ]]></inline-action>
+				</inline-edit>
+				<inline-edit>
+					<inline-find><![CDATA[$row['forum_id'])]]></inline-find>
+					<inline-action type="after-add"><![CDATA[) || $row['post_time'] <= time())]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[						{]]></find>
+				<action type="after-add"><![CDATA[							if ($row['forum_id'])
+							{]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[							$forum_names[] = $row['forum_id'];]]></find>
+				<action type="after-add"><![CDATA[							}
+							$rowset[] = $row;
+						}
+						else
+						{
+							continue;]]></action>
+			</edit>
+			<edit>
+				<remove><![CDATA[						$rowset[] = $row;]]></remove>
+			</edit>
+			<edit>
+				<find><![CDATA[						'POST_TIME'		=> $user->format_date($row['post_time']))]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[						'POST_TIME'		=> $user->format_date($row['post_time'])]]></inline-find>
+					<inline-find><![CDATA[)]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[,]]></inline-action>
+				</inline-edit>
+				<action type="after-add"><![CDATA[						'FUTURE_IMG'	=> $user->img('icon_topic_future', 'TOPIC_FUTURE'),
+
+						'S_TOPIC_POST_FUTURE'	=> ($row['post_time'] > time()) ? true : false)]]></action>
+			</edit>
+		</open>
+		<open src="includes/mcp/mcp_reports.php">
+			<edit>
+				<find><![CDATA[					'S_CAN_VIEWIP'			=> $auth->acl_get('m_info', $post_info['forum_id']),]]></find>
+				<action type="after-add"><![CDATA[					'S_TOPIC_POST_FUTURE'	=> ($post_info['post_time'] > time()) ? true : false,]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[					'POST_ID'				=> $post_info['post_id'],]]></find>
+				<action type="after-add"><![CDATA[					'FUTURE_IMG'			=> $user->img('icon_topic_future', 'POST_FUTURE'),]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[				$sql = 'SELECT r.report_id]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[				$sql = 'SELECT r.report_id]]></inline-find>
+					<inline-action type="after-add"><![CDATA[, p.forum_id, p.post_time]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[				{]]></find>
+				<action type="after-add"><![CDATA[					if (($row['post_time'] > time() && $auth->acl_get('m_viewfp', $row['forum_id'])) || $row['post_time'] <= time())
+					{]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[					$row_num[$row['report_id']] = $i++;]]></find>
+				<action type="after-add"><![CDATA[					}
+					else
+					{
+						continue;
+					}]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[							'FORUM_NAME'	=> (!$global_topic) ? $forum_data[$row['forum_id']]['forum_name'] : $user->lang['GLOBAL_ANNOUNCEMENT'],]]></find>
+				<action type="after-add"><![CDATA[							'FUTURE_IMG'	=> $user->img('icon_topic_future', 'POST_FUTURE'),]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[							'TOPIC_TITLE'	=> $row['topic_title'])]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[							'TOPIC_TITLE'	=> $row['topic_title']]]></inline-find>
+					<inline-find><![CDATA[)]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[,]]></inline-action>
+				</inline-edit>
+				<action type="after-add"><![CDATA[							'S_TOPIC_POST_FUTURE'	=> ($row['post_time'] > time()) ? true : false)]]></action>
+			</edit>
+		</open>
+		<open src="includes/mcp/mcp_topic.php">
+			<edit>
+				<find><![CDATA[			'RETURN_TOPIC'	=> sprintf($user->lang['RETURN_TOPIC'], '<a href="' . append_sid("{$phpbb_root_path}viewtopic.$phpEx", 't=' . $topic_id) . '">', '</a>'),]]></find>
+				<action type="after-add"><![CDATA[			'FUTURE_IMG'	=> $user->img('icon_topic_future', 'POST_FUTURE'),]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[			'S_HAS_ATTACHMENTS'	=> (!empty($attachments[$row['post_id']])) ? true : false,]]></find>
+				<action type="after-add"><![CDATA[			'S_TOPIC_POST_FUTURE'	=> ($row['post_time'] > time()) ? true : false,]]></action>
+			</edit>
+		</open>
+		<open src="includes/ucp/ucp_main.php">
+			<edit>
+				<find><![CDATA[						AND t.topic_type = " . POST_GLOBAL . ']]></find>
+				<action type="after-add"><![CDATA[						AND t.topic_time <= ' . time() . ']]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[					$sql = $db->sql_build_query('SELECT', $sql_array);
+					$result = $db->sql_query($sql);
+
+					while ($row = $db->sql_fetchrow($result))
+					{]]></find>
+				<action type="after-add"><![CDATA[						$old_last_post_time = $row['forum_last_post_time'];
+						$row = check_future_date($row);
+]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[						$unread_forum = ($row['forum_last_post_time'] > $forum_check) ? true : false;]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[$row['forum_last_post_time']]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[$old_last_post_time]]></inline-action>
+				</inline-edit>
+				<action type="after-add"><![CDATA[
+						if ($unread_forum && has_future_posts($forum_id) && !new_present_posts($forum_id, $forum_check))
+						{
+							$unread_forum = false;
+						}]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[				'ATTACH_ICON_IMG'		=> ($auth->acl_get('u_download') && $auth->acl_get('f_download', $forum_id) && $row['topic_attachment']) ? $user->img('icon_topic_attach', $user->lang['TOTAL_ATTACHMENTS']) : '',]]></find>
+				<action type="after-add"><![CDATA[				'FUTURE_IMG'			=> $user->img('icon_topic_future', 'TOPIC_FUTURE'),]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[				'S_TOPIC_TYPE'			=> $row['topic_type'],]]></find>
+				<action type="after-add"><![CDATA[				'S_TOPIC_POST_FUTURE'	=> ($row['topic_time'] > time()) ? true : false,]]></action>
+			</edit>
+		</open>
+		<open src="language/en/common.php">
+			<edit>
+				<find><![CDATA[	'POST_DETAILS'			=> 'Post details',]]></find>
+				<action type="after-add"><![CDATA[	'POST_FUTURE'			=> 'This post is set to be posted at a future time',]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[	'TOPICS_UNAPPROVED'	=> 'At least one topic in this forum has not been approved.',]]></find>
+				<action type="after-add"><![CDATA[	'TOPIC_FUTURE'		=> 'This topic is set to be posted at a future time',]]></action>
+			</edit>
+		</open>
+		<open src="language/en/posting.php">
+			<edit>
+				<find><![CDATA[	'BUMP_ERROR'				=> 'You cannot bump this topic so soon after the last post.',]]></find>
+				<action type="after-add"><![CDATA[	'BUMP_ERROR_FP'				=> 'You cannot bump this topic because its post time is set to a future date.',]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[	'FONT_TINY'					=> 'Tiny',]]></find>
+				<action type="after-add"><![CDATA[	'FUTURE_POST'				=> 'Post Date',
+	'FUTURE_POST_DESC'			=> 'The date/time this post will appear. Leave blank to post immediately.',]]></action>
+			</edit>
+		</open>
+		<open src="language/en/acp/permissions_phpbb.php">
+			<edit>
+				<find><![CDATA[	'acl_f_post'		=> array('lang' => 'Can start new topics', 'cat' => 'post'),]]></find>
+				<action type="after-add"><![CDATA[	'acl_f_future_post' => array('lang' => 'Can make future posts', 'cat' => 'post'),]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[	'acl_m_info'	=> array('lang' => 'Can view post details', 'cat' => 'misc'),]]></find>
+				<action type="after-add"><![CDATA[	'acl_m_viewfp'	=> array('lang' => 'Can view future posts before specified post date', 'cat' => 'misc'),]]></action>
+			</edit>
+		</open>
+		<open src="language/en/acp/styles.php">
+			<edit>
+				<find><![CDATA[	'IMG_ICON_TOPIC_ATTACH'			=> 'Attachment',]]></find>
+				<action type="after-add"><![CDATA[	'IMG_ICON_TOPIC_FUTURE'			=> 'Future post',]]></action>
+			</edit>
+		</open>
+		<open src="styles/prosilver/imageset/imageset.cfg">
+			<edit>
+				<find><![CDATA[img_icon_topic_attach = icon_topic_attach.gif*10*7]]></find>
+				<action type="after-add"><![CDATA[img_icon_topic_future = icon_topic_future.gif*15*15]]></action>
+			</edit>
+		</open>
+		<open src="styles/prosilver/template/mcp_forum.html">
+			<edit>
+				<find><![CDATA[		<li class="row<!-- IF topicrow.S_ROW_COUNT is odd --> bg1<!-- ELSE --> bg2<!-- ENDIF --><!-- IF topicrow.S_TOPIC_REPORTED --> reported<!-- ENDIF -->">]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[		<li class="row<!-- IF topicrow.S_ROW_COUNT is odd --> bg1<!-- ELSE --> bg2<!-- ENDIF --><!-- IF topicrow.S_TOPIC_REPORTED --> reported<!-- ENDIF -->]]></inline-find>
+					<inline-action type="after-add"><![CDATA[<!-- IF topicrow.S_TOPIC_POST_FUTURE --> future<!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[					<a href="{topicrow.U_VIEW_TOPIC}" class="topictitle">{topicrow.TOPIC_TITLE}</a>]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[					<a href="{topicrow.U_VIEW_TOPIC}" class="topictitle">{topicrow.TOPIC_TITLE}</a>]]></inline-find>
+					<inline-action type="after-add"><![CDATA[<!-- IF topicrow.S_TOPIC_POST_FUTURE --> {topicrow.FUTURE_IMG} <!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+			</edit>
+		</open>
+		<open src="styles/prosilver/template/mcp_front.html">
+			<edit>
+				<find><![CDATA[			<li class="row<!-- IF unapproved.S_ROW_COUNT is odd --> bg1<!-- ELSE --> bg2<!-- ENDIF -->">]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[			<li class="row<!-- IF unapproved.S_ROW_COUNT is odd --> bg1<!-- ELSE --> bg2<!-- ENDIF -->]]></inline-find>
+					<inline-action type="after-add"><![CDATA[<!-- IF unapproved.S_TOPIC_POST_FUTURE --> future<!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[						<a href="{unapproved.U_POST_DETAILS}" class="topictitle">{unapproved.SUBJECT}</a> {unapproved.ATTACH_ICON_IMG}<br />]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[						<a href="{unapproved.U_POST_DETAILS}" class="topictitle">{unapproved.SUBJECT}</a> {unapproved.ATTACH_ICON_IMG}<]]></inline-find>
+					<inline-action type="after-add"><![CDATA[!-- IF unapproved.S_TOPIC_POST_FUTURE --> {unapproved.FUTURE_IMG}<!-- ENDIF --><]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[						<a href="{report.U_POST_DETAILS}#reports" class="topictitle">{report.SUBJECT}</a> {report.ATTACH_ICON_IMG}<br />]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[						<a href="{report.U_POST_DETAILS}#reports" class="topictitle">{report.SUBJECT}</a> {report.ATTACH_ICON_IMG}<]]></inline-find>
+					<inline-action type="after-add"><![CDATA[!-- IF report.S_TOPIC_POST_FUTURE --> {report.FUTURE_IMG}<!-- ENDIF --><]]></inline-action>
+				</inline-edit>
+			</edit>
+		</open>
+		<open src="styles/prosilver/template/mcp_post.html">
+			<edit>
+				<find><![CDATA[		<h3><a href="{U_VIEW_POST}">{POST_SUBJECT}</a></h3>]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[		<h3]]></inline-find>
+					<inline-action type="after-add"><![CDATA[><!-- IF S_TOPIC_POST_FUTURE -->{FUTURE_IMG} <!-- ENDIF --]]></inline-action>
+				</inline-edit>
+			</edit>
+		</open>
+		<open src="styles/prosilver/template/mcp_queue.html">
+			<edit>
+				<find><![CDATA[		<li class="row<!-- IF postrow.S_ROW_COUNT is odd --> bg1<!-- ELSE --> bg2<!-- ENDIF -->">]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[		<li class="row<!-- IF postrow.S_ROW_COUNT is odd --> bg1<!-- ELSE --> bg2<!-- ENDIF -->]]></inline-find>
+					<inline-action type="after-add"><![CDATA[<!-- IF postrow.S_TOPIC_POST_FUTURE --> future<!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[					<a href="{postrow.U_VIEW_DETAILS}" class="topictitle">{postrow.POST_SUBJECT}</a> <br />]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[					<a href="{postrow.U_VIEW_DETAILS}" class="topictitle">{postrow.POST_SUBJECT}</a>]]></inline-find>
+					<inline-action type="after-add"><![CDATA[<!-- IF postrow.S_TOPIC_POST_FUTURE --> {postrow.FUTURE_IMG}<!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+			</edit>
+		</open>
+		<open src="styles/prosilver/template/mcp_reports.html">
+			<edit>
+				<find><![CDATA[						<a href="{postrow.U_VIEW_DETAILS}" class="topictitle">{postrow.POST_SUBJECT}</a> {postrow.ATTACH_ICON_IMG}<br />]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[						<a href="{postrow.U_VIEW_DETAILS}" class="topictitle">{postrow.POST_SUBJECT}</a> {postrow.ATTACH_ICON_IMG}<]]></inline-find>
+					<inline-action type="after-add"><![CDATA[!-- IF postrow.S_TOPIC_POST_FUTURE --> {postrow.FUTURE_IMG}<!-- ENDIF --><]]></inline-action>
+				</inline-edit>
+			</edit>
+		</open>
+		<open src="styles/prosilver/template/mcp_topic.html">
+			<edit>
+				<find><![CDATA[				</p>]]></find>
+				<action type="after-add"><![CDATA[				<!-- ENDIF -->
+
+				<!-- IF postrow.S_TOPIC_POST_FUTURE -->
+					<p class="rules future">
+						<!-- IF postrow.S_TOPIC_POST_FUTURE -->{postrow.FUTURE_IMG} <a href="#pr{postrow.POST_ID}"><strong>{L_POST_FUTURE}</strong></a><!-- ENDIF -->
+					</p>]]></action>
+			</edit>
+		</open>
+		<open src="styles/prosilver/template/posting_editor.html">
+			<edit>
+				<find><![CDATA[		<dd><input type="text" name="subject" id="subject" size="45" maxlength="<!-- IF S_NEW_MESSAGE -->60<!-- ELSE -->64<!-- ENDIF -->" tabindex="2" value="{SUBJECT}{DRAFT_SUBJECT}" class="inputbox autowidth" /></dd>
+	</dl>]]></find>
+				<action type="after-add"><![CDATA[	<!-- IF S_FUTURE_POST -->
+	<dl>
+		<dt><label for="future_post_time">{L_FUTURE_POST}:</label><br /><span>{L_FUTURE_POST_DESC}</span></dt>
+		<dd><input type="text" name="future_post_time" id="future_post_time" size="45" maxlength="60" tabindex="2" value="{FUTURE_POST_TIME}" class="inputbox autowidth" title="{L_FUTURE_POST}" /></dd>
+	</dl>
+	<!-- ENDIF -->]]></action>
+			</edit>
+		</open>
+		<open src="styles/prosilver/template/search_results.html">
+			<edit>
+				<find><![CDATA[			<li class="row<!-- IF searchresults.S_ROW_COUNT is even --> bg1<!-- ELSE --> bg2<!-- ENDIF -->">]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[			<li class="row<!-- IF searchresults.S_ROW_COUNT is even --> bg1<!-- ELSE --> bg2<!-- ENDIF -->]]></inline-find>
+					<inline-action type="after-add"><![CDATA[<!-- IF searchresults.S_TOPIC_POST_FUTURE --> future<!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[						<!-- IF searchresults.S_TOPIC_REPORTED --><a href="{searchresults.U_MCP_REPORT}">{REPORTED_IMG}</a><!-- ENDIF --><br />]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[						<!-- IF searchresults.]]></inline-find>
+					<inline-find><![CDATA[S_TOPIC_REPORTED]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[S_TOPIC_POST_FUTURE]]></inline-action>
+				</inline-edit>
+				<inline-edit>
+					<inline-find><![CDATA[ --><a href="]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[ -->]]></inline-action>
+				</inline-edit>
+				<inline-edit>
+					<inline-find><![CDATA[{]]></inline-find>
+					<inline-find><![CDATA[searchresults.U_MCP_REPORT]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[FUTURE_IMG]]></inline-action>
+				</inline-edit>
+				<inline-edit>
+					<inline-find><![CDATA[}">{REPORTED_IMG}</a>]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[}]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[		<div class="search post <!-- IF searchresults.S_ROW_COUNT is odd -->bg1<!-- ELSE -->bg2<!-- ENDIF --><!-- IF searchresults.S_POST_REPORTED --> reported<!-- ENDIF -->">]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[		<div class="search post <!-- IF searchresults.S_ROW_COUNT is odd -->bg1<!-- ELSE -->bg2<!-- ENDIF --><!-- IF searchresults.]]></inline-find>
+					<inline-action type="after-add"><![CDATA[S_TOPIC_POST_FUTURE --> future<!-- ENDIF --><!-- IF searchresults.]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[			<h3><a href="{searchresults.U_VIEW_POST}">{searchresults.POST_SUBJECT}</a></h3>]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[			<h3><a href="{searchresults.U_VIEW_POST}">{searchresults.POST_SUBJECT}</a>]]></inline-find>
+					<inline-action type="after-add"><![CDATA[ <!-- IF searchresults.S_TOPIC_POST_FUTURE -->{FUTURE_IMG}<!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+			</edit>
+		</open>
+		<open src="styles/prosilver/template/ucp_main_bookmarks.html">
+			<edit>
+				<find><![CDATA[		<li class="row<!-- IF topicrow.S_TOPIC_REPORTED --> reported<!-- ELSEIF topicrow.S_ROW_COUNT is odd --> bg1<!-- ELSE --> bg2<!-- ENDIF -->">]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[		<li class="row<!-- IF topicrow.S_TOPIC_REPORTED --> reported<!-- ELSEIF topicrow.S_ROW_COUNT is odd --> bg1<!-- ELSE --> bg2<!-- ENDIF -->]]></inline-find>
+					<inline-action type="after-add"><![CDATA[<!-- IF topicrow.S_TOPIC_POST_FUTURE --> future<!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[					<!-- IF topicrow.S_UNREAD_TOPIC --><a href="{topicrow.U_NEWEST_POST}">{NEWEST_POST_IMG}</a> <!-- ENDIF --><a href="{topicrow.U_VIEW_TOPIC}" class="topictitle">{topicrow.TOPIC_TITLE}</a>]]></find>
+				<action type="after-add"><![CDATA[					<!-- IF topicrow.S_TOPIC_POST_FUTURE -->{topicrow.FUTURE_IMG} <!-- ENDIF -->]]></action>
+			</edit>
+		</open>
+		<open src="styles/prosilver/template/viewforum_body.html">
+			<edit>
+				<find><![CDATA[		<li class="row<!-- IF topicrow.S_ROW_COUNT is even --> bg1<!-- ELSE --> bg2<!-- ENDIF --><!-- IF topicrow.S_POST_ANNOUNCE --> announce<!-- ENDIF --><!-- IF topicrow.S_POST_STICKY --> sticky<!-- ENDIF --><!-- IF topicrow.S_TOPIC_REPORTED --> reported<!-- ENDIF -->">]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[		<li class="row<!-- IF topicrow.S_ROW_COUNT is even --> bg1<!-- ELSE --> bg2<!-- ENDIF --><!-- IF topicrow.S_POST_ANNOUNCE --> announce<!-- ENDIF --><!-- IF topicrow.S_POST_STICKY --> sticky<!-- ENDIF --><!-- IF topicrow.S_TOPIC_REPORTED --> reported<!-- ENDIF -->]]></inline-find>
+					<inline-action type="after-add"><![CDATA[<!-- IF topicrow.S_TOPIC_POST_FUTURE --> future<!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[					<!-- IF topicrow.S_TOPIC_REPORTED --><a href="{topicrow.U_MCP_REPORT}">{REPORTED_IMG}</a><!-- ENDIF --><br />]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[					<!-- IF topicrow.S_TOPIC_REPORTED --><a href="{topicrow.U_MCP_REPORT}">{REPORTED_IMG}</a><!-- ENDIF --><br />]]></inline-find>
+					<inline-action type="replace-with"><![CDATA[					<!-- IF topicrow.S_TOPIC_REPORTED --><a href="{topicrow.U_MCP_REPORT}">{REPORTED_IMG}</a><!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+				<action type="after-add"><![CDATA[					<!-- IF topicrow.S_TOPIC_POST_FUTURE --> {FUTURE_IMG}<!-- ENDIF --><br />]]></action>
+			</edit>
+		</open>
+		<open src="styles/prosilver/template/viewtopic_body.html">
+			<edit>
+				<find><![CDATA[					<!-- IF postrow.S_POST_REPORTED -->{REPORTED_IMG} <a href="{postrow.U_MCP_REPORT}"><strong>{L_POST_REPORTED}</strong></a><!-- ENDIF -->]]></find>
+				<action type="after-add"><![CDATA[				</p>
+			<!-- ENDIF -->
+
+			<!-- IF postrow.S_TOPIC_POST_FUTURE -->
+				<p class="rules future">
+					<!-- IF postrow.S_TOPIC_POST_FUTURE -->{FUTURE_IMG} <a href="#p{postrow.POST_ID}"><strong>{L_POST_FUTURE}</strong></a><!-- ENDIF -->]]></action>
+			</edit>
+		</open>
+		<open src="styles/prosilver/theme/colours.css">
+			<edit>
+				<find><![CDATA[	color: #BC2A4D;]]></find>
+				<action type="after-add"><![CDATA[}
+
+.future {
+	background-color: #F6F4D0 !important;]]></action>
+			</edit>
+		</open>
+		<php-installer><![CDATA[install_future_posts.php]]></php-installer>
+		<diy-instructions lang="en"><![CDATA[First and foremost, purge the cache, and refresh your templates, imageset, and theme in the ACP (go to the 'Styles' tab).
+
+In order for users to be able to make and view future posts, the proper permissions need to be set. Both instances are explained below.
+
+1. Allowing users to make future posts.
+
+   You can allow specific users or user groups to make future posts on a per-forum basis.
+
+     - STEPS: Go to the ACP => Permissions => Forum Based Permissions => Users' forum permissions OR Groups' forum permissions => Enter the user's name OR Choose a group => Select the forum(s) you wish => In the 'Post' tab, find 'Can make future posts' and set to Yes => Apply all permissions.
+
+   Now that user or group can make future posts in the specified forum(s).
+
+2. Allowing moderators/admins to view future posts before their post date.
+
+   You can allow specific users or user groups to moderate future posts and view future posts before their post date on a per-forum basis.
+
+     - STEPS: Go to the ACP => Permissions => Forum Based Permissions => Users' forum permissions OR Groups' forum permissions => Enter the user's name OR Choose a group => Select the forum(s) you wish => Find 'Select type' dropdown box near top of page and choose 'Moderator permissions' and click Go => In the 'Misc' tab, find 'Can view future posts before specified post date' and set to Yes => Apply all permissions.
+
+   Now that user or group can view and moderate ALL future posts in the specified forum(s).
+
+------------------------------------------------
+
+If you require additional assistance, please visit the Support Section for this MOD in the Cusomisations Database and post a new topic there for help (URL to come).]]></diy-instructions>
+	</action-group>
+</mod>

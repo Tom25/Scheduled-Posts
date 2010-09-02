@@ -1,0 +1,437 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<?xml-stylesheet type="text/xsl" href="modx.prosilver.en.xsl"?>
+<!--NOTICE: Please open this file in your web browser. If presented with a security warning, you may safely tell it to allow the blocked content.-->
+<!--For security purposes, please check: http://www.phpbb.com/mods/ for the latest version of this MOD.\nAlthough MODs are checked before being allowed in the MODs Database there is no guarantee that there are no security problems within the MOD.\nNo support will be given for MODs not found within the MODs Database which can be found at http://www.phpbb.com/mods/-->
+<mod xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.phpbb.com/mods/xml/modx-1.2.5.xsd">
+	<header>
+		<license><![CDATA[http://opensource.org/licenses/gpl-license.php GNU General Public License v2]]></license>
+		<title lang="en"><![CDATA[Future Posts - subsilver2 Edits]]></title>
+		<description lang="en"><![CDATA[(These are the edits for the subsilver2 style.) This MOD allows users with the proper permissions to compose a new topic and specify a date/time in the future that the topic will be posted (i.e. made publicly viewable) right from the posting page. Moderators and Administrators with the proper permissions can view topics that are set to be posted in the future in their respective forums. All permissions for using the future post feature and for viewing future topics can be set in the ACP for each individual forum/category on your board.]]></description>
+		<author-notes lang="en"><![CDATA[These subsilver2 edits should be easy enough to install by hand (easier than the main install file, which is easier to run in AutoMOD). It should not take very long to perform these edits, even though there are quite a few edits to make in this file.]]></author-notes>
+		<author-group>
+			<author>
+				<realname><![CDATA[Tom Catullo]]></realname>
+				<username><![CDATA[Tom]]></username>
+				<homepage><![CDATA[http://www.cortello.com]]></homepage>
+				<email><![CDATA[tom@cortello.com]]></email>
+			</author>
+		</author-group>
+		<mod-version>0.0.1</mod-version>
+		<installation>
+			<level>easy</level>
+			<time>1200</time>
+			<target-version>3.0.7-PL1</target-version>
+		</installation>
+		<history>
+			<entry>
+				<date>2010-07-21</date>
+				<rev-version>0.0.1</rev-version>
+				<changelog lang="en">
+					<change><![CDATA[First beta release (Beta 1)]]></change>
+				</changelog>
+			</entry>
+		</history>
+		<link-group>
+			<link type="parent" href="../install.xml" lang="en">Main install file</link>
+		</link-group>
+	</header>
+	<action-group>
+		<copy>
+			<file from="root/styles/subsilver2/imageset/icon_topic_future.gif" to="styles/subsilver2/imageset/icon_topic_future.gif"/>
+		</copy>
+		<open src="styles/subsilver2/imageset/imageset.cfg">
+			<edit>
+				<find><![CDATA[img_icon_topic_attach = icon_topic_attach.gif*18*14]]></find>
+				<action type="after-add"><![CDATA[img_icon_topic_future = icon_topic_future.gif*15*15]]></action>
+			</edit>
+		</open>	
+		<open src="styles/subsilver2/template/mcp_forum.html">
+			<edit>
+				<find><![CDATA[		<td class="row1" width="25" align="center">{topicrow.TOPIC_FOLDER_IMG}</td>]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[		<td class="row1]]></inline-find>
+					<inline-action type="after-add"><![CDATA[<!-- IF topicrow.S_TOPIC_POST_FUTURE --> future<!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[		<td class="row1">]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[		<td class="row1]]></inline-find>
+					<inline-action type="after-add"><![CDATA[<!-- IF topicrow.S_TOPIC_POST_FUTURE --> future<!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[				<a href="{topicrow.U_MCP_REPORT}">{REPORTED_IMG}</a>&nbsp;
+			<!-- ENDIF -->]]></find>
+				<action type="after-add"><![CDATA[			<!-- IF topicrow.S_TOPIC_POST_FUTURE -->
+				{topicrow.FUTURE_IMG}&nbsp;
+			<!-- ENDIF -->]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[		<td class="row1" width="50" align="center"><p class="topicdetails">{topicrow.REPLIES}</p></td>]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[		<td class="row1]]></inline-find>
+					<inline-action type="after-add"><![CDATA[<!-- IF topicrow.S_TOPIC_POST_FUTURE --> future<!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[		<td class="row1" width="120" align="center"><p class="topicdetails">{topicrow.LAST_POST_TIME}</p></td>]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[		<td class="row1]]></inline-find>
+					<inline-action type="after-add"><![CDATA[<!-- IF topicrow.S_TOPIC_POST_FUTURE --> future<!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[		<td class="row2" align="center">]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[		<td class="row2]]></inline-find>
+					<inline-action type="after-add"><![CDATA[<!-- IF topicrow.S_TOPIC_POST_FUTURE --> future<!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+			</edit>
+		</open>
+		<open src="styles/subsilver2/template/mcp_front.html">
+			<edit>
+				<find><![CDATA[			<td class="row1" width="15%" valign="top"><span class="gen"><!-- IF unapproved.U_FORUM --><a href="{unapproved.U_FORUM}">{unapproved.FORUM_NAME}</a><!-- ELSE -->{unapproved.FORUM_NAME}<!-- ENDIF --></span><!-- IF unapproved.U_MCP_FORUM --><br /><span class="gensmall">[ <a href="{unapproved.U_MCP_FORUM}">{L_MODERATE}</a> ]</span><!-- ENDIF --></td>]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[			<td class="row1]]></inline-find>
+					<inline-action type="after-add"><![CDATA[<!-- IF unapproved.S_TOPIC_POST_FUTURE --> future<!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[			<td class="row2" valign="top"><span class="gen"><a href="{unapproved.U_TOPIC}">{unapproved.TOPIC_TITLE}</a></span><br /><span class="gensmall">[ <a href="{unapproved.U_MCP_TOPIC}">{L_MODERATE}</a> ]</span></td>]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[			<td class="row2]]></inline-find>
+					<inline-action type="after-add"><![CDATA[<!-- IF unapproved.S_TOPIC_POST_FUTURE --> future<!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[			<td class="row1" valign="top"><span class="gen">{unapproved.SUBJECT}</span><br /><span class="gensmall">[ <a href="{unapproved.U_POST_DETAILS}">{L_VIEW_DETAILS}</a> ]</span></td>]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[			<td class="row1]]></inline-find>
+					<inline-action type="after-add"><![CDATA[<!-- IF unapproved.S_TOPIC_POST_FUTURE --> future<!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+				<inline-edit>
+					<inline-find><![CDATA[{unapproved.SUBJECT}</span>]]></inline-find>
+					<inline-action type="after-add"><![CDATA[<!-- IF unapproved.S_TOPIC_POST_FUTURE --> {unapproved.FUTURE_IMG}<!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[			<td class="row2" align="center" width="15%" nowrap="nowrap" valign="top"><span class="gen">{unapproved.AUTHOR_FULL}</span></td>]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[			<td class="row2]]></inline-find>
+					<inline-action type="after-add"><![CDATA[<!-- IF unapproved.S_TOPIC_POST_FUTURE --> future<!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[			<td class="row1" align="center" width="15%" nowrap="nowrap" valign="top"><span class="gensmall">{unapproved.POST_TIME}</span></td>]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[			<td class="row1]]></inline-find>
+					<inline-action type="after-add"><![CDATA[<!-- IF unapproved.S_TOPIC_POST_FUTURE --> future<!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[			<td class="row2" align="center"><input type="checkbox" class="radio" name="post_id_list[]" value="{unapproved.POST_ID}" /></td>]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[			<td class="row2]]></inline-find>
+					<inline-action type="after-add"><![CDATA[<!-- IF unapproved.S_TOPIC_POST_FUTURE --> future<!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[			<td class="row1" valign="top"><span class="gen">{report.SUBJECT}</span><br /><span class="gensmall">[ <a href="{report.U_POST_DETAILS}">{L_VIEW_DETAILS}</a> ]</span></td>]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[			<td class="row1" valign="top"><span class="gen">{report.SUBJECT}</span>]]></inline-find>
+					<inline-action type="after-add"><![CDATA[<!-- IF report.S_TOPIC_POST_FUTURE --> {unapproved.FUTURE_IMG}<!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+			</edit>
+		</open>
+		<open src="styles/subsilver2/template/mcp_post.html">
+			<edit>
+				<find><![CDATA[	<td class="row2"><span class="gen">{POST_SUBJECT}</span> <!-- IF S_POST_UNAPPROVED --><span class="postapprove">{UNAPPROVED_IMG} <a href="{U_MCP_APPROVE}">{L_POST_UNAPPROVED}</a></span> <!-- ENDIF --> <!-- IF S_POST_REPORTED and not S_MCP_REPORT --><span class="postreported">{REPORTED_IMG} <a href="{U_MCP_REPORT}">{L_POST_REPORTED}</a></span><!-- ENDIF --></td>]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[	<td class="row2"><span class="gen">{POST_SUBJECT}</span>]]></inline-find>
+					<inline-action type="after-add"><![CDATA[<!-- IF S_TOPIC_POST_FUTURE --> {FUTURE_IMG}&nbsp;<!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+			</edit>
+		</open>
+		<open src="styles/subsilver2/template/mcp_queue.html">
+			<edit>
+				<find><![CDATA[	<!-- IF postrow.S_ROW_COUNT is even --><tr class="row1"><!-- ELSE --><tr class="row2"><!-- ENDIF -->]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[	<!-- IF postrow.S_ROW_COUNT is even --><tr class="row1]]></inline-find>
+					<inline-action type="after-add"><![CDATA[<!-- IF postrow.S_TOPIC_POST_FUTURE --> future<!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+				<inline-edit>
+					<inline-find><![CDATA["><!-- ELSE --><tr class="row2]]></inline-find>
+					<inline-action type="after-add"><![CDATA[<!-- IF postrow.S_TOPIC_POST_FUTURE --> future<!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[		<td style="padding: 4px;"><p class="topictitle"><a href="{postrow.U_VIEWPOST}">{postrow.POST_SUBJECT}</a></p>]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[		<td style="padding: 4px;"><p class="topictitle"><a href="{postrow.U_VIEWPOST}">{postrow.POST_SUBJECT}</a>]]></inline-find>
+					<inline-action type="after-add"><![CDATA[<!-- IF postrow.S_TOPIC_POST_FUTURE --> {postrow.FUTURE_IMG}<!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+			</edit>
+		</open>
+		<open src="styles/subsilver2/template/mcp_reports.html">
+			<edit>
+				<find><![CDATA[		<td style="padding: 4px;"><p class="topictitle"><a href="{postrow.U_VIEWPOST}">{postrow.POST_SUBJECT}</a></p>]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[		<td style="padding: 4px;"><p class="topictitle"><a href="{postrow.U_VIEWPOST}">{postrow.POST_SUBJECT}</a>]]></inline-find>
+					<inline-action type="after-add"><![CDATA[<!-- IF postrow.S_TOPIC_POST_FUTURE --> {postrow.FUTURE_IMG}<!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+			</edit>
+		</open>
+		<open src="styles/subsilver2/template/mcp_topic.html">
+			<edit>
+				<find><![CDATA[							<!-- IF postrow.S_POST_REPORTED and postrow.U_MCP_REPORT --><span class="postreported">{REPORTED_IMG} <a href="{postrow.U_MCP_REPORT}">{L_POST_REPORTED}</a></span><!-- ENDIF -->]]></find>
+				<action type="after-add"><![CDATA[							<!-- IF postrow.S_TOPIC_POST_FUTURE --><br /><span>{postrow.FUTURE_IMG} <strong>{L_POST_FUTURE}</strong></span><!-- ENDIF -->]]></action>
+			</edit>
+		</open>
+		<open src="styles/subsilver2/template/posting_body.html">
+			<edit>
+				<find><![CDATA[	<td class="row2" width="78%"><input class="post" style="width:450px" type="text" name="subject" size="45" maxlength="<!-- IF S_NEW_MESSAGE -->60<!-- ELSE -->64<!-- ENDIF -->" tabindex="2" value="{SUBJECT}" /></td>
+</tr>]]></find>
+				<action type="after-add"><![CDATA[<!-- IF S_FUTURE_POST -->
+<tr>
+	<td class="row1" width="22%"><b class="genmed">{L_FUTURE_POST}:</b><br /><span class="gensmall">{L_FUTURE_POST_DESC}&nbsp;</span></td>
+	<td class="row2" width="78%"><input class="post" style="width:450px" type="text" name="future_post_time" size="45" maxlength="60" tabindex="2" value="{FUTURE_POST_TIME}" /></td>
+</tr>
+<!-- ENDIF -->]]></action>
+			</edit>
+		</open>
+		<open src="styles/subsilver2/template/search_results.html">
+			<edit>
+				<find><![CDATA[			<td class="row1" width="25" align="center">{searchresults.TOPIC_FOLDER_IMG}</td>]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[			<td class="row1]]></inline-find>
+					<inline-action type="after-add"><![CDATA[<!-- IF searchresults.S_TOPIC_POST_FUTURE --> future<!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[			<td class="row1" width="25" align="center">]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[			<td class="row1]]></inline-find>
+					<inline-action type="after-add"><![CDATA[<!-- IF searchresults.S_TOPIC_POST_FUTURE --> future<!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[			<td class="row1">]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[			<td class="row1]]></inline-find>
+					<inline-action type="after-add"><![CDATA[<!-- IF searchresults.S_TOPIC_POST_FUTURE --> future<!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[				{searchresults.ATTACH_ICON_IMG} <a href="{searchresults.U_VIEW_TOPIC}" class="topictitle">{searchresults.TOPIC_TITLE}</a>]]></find>
+				<action type="after-add"><![CDATA[				<!-- IF searchresults.S_TOPIC_POST_FUTURE -->
+					{FUTURE_IMG}
+				<!-- ENDIF -->]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[			<td class="row2" width="100" align="center"><p class="topicauthor">{searchresults.TOPIC_AUTHOR_FULL}</p></td>]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[			<td class="row2]]></inline-find>
+					<inline-action type="after-add"><![CDATA[<!-- IF searchresults.S_TOPIC_POST_FUTURE --> future<!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[			<td class="row1" width="50" align="center"><p class="topicdetails">{searchresults.TOPIC_REPLIES}</p></td>]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[			<td class="row1]]></inline-find>
+					<inline-action type="after-add"><![CDATA[<!-- IF searchresults.S_TOPIC_POST_FUTURE --> future<!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[			<td class="row2" width="50" align="center"><p class="topicdetails">{searchresults.TOPIC_VIEWS}</p></td>]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[			<td class="row2]]></inline-find>
+					<inline-action type="after-add"><![CDATA[<!-- IF searchresults.S_TOPIC_POST_FUTURE --> future<!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[			<td class="row1" width="120" align="center">]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[			<td class="row1]]></inline-find>
+					<inline-action type="after-add"><![CDATA[<!-- IF searchresults.S_TOPIC_POST_FUTURE --> future<!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[			<tr class="row1">]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[			<tr class="row1]]></inline-find>
+					<inline-action type="after-add"><![CDATA[<!-- IF searchresults.S_TOPIC_POST_FUTURE --> future<!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[								&nbsp;<b>{L_POST_SUBJECT}:</b> <a href="{searchresults.U_VIEW_POST}">{searchresults.POST_SUBJECT}</a>]]></find>
+				<action type="after-add"><![CDATA[								<!-- IF searchresults.S_TOPIC_POST_FUTURE --> {FUTURE_IMG}<!-- ENDIF -->]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[			<tr class="row1">]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[			<tr class="row1]]></inline-find>
+					<inline-action type="after-add"><![CDATA[<!-- IF searchresults.S_TOPIC_POST_FUTURE --> future<!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+			</edit>
+		</open>
+		<open src="styles/subsilver2/template/ucp_main_bookmarks.html">
+			<edit>
+				<find><![CDATA[		<!-- IF topicrow.S_ROW_COUNT is even --><tr class="row1"><!-- ELSE --><tr class="row2"><!-- ENDIF -->]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[		<!-- IF topicrow.S_ROW_COUNT is even --><tr class="row1]]></inline-find>
+					<inline-action type="after-add"><![CDATA[<!-- IF topicrow.S_TOPIC_POST_FUTURE --> future<!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+				<inline-edit>
+					<inline-find><![CDATA["><!-- ELSE --><tr class="row2]]></inline-find>
+					<inline-action type="after-add"><![CDATA[<!-- IF topicrow.S_TOPIC_POST_FUTURE --> future<!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[				<p class="topictitle"><!-- IF topicrow.S_UNREAD_TOPIC --><a href="{topicrow.U_NEWEST_POST}">{NEWEST_POST_IMG}</a> <!-- ENDIF -->{topicrow.ATTACH_ICON_IMG} <a href="{topicrow.U_VIEW_TOPIC}">{topicrow.TOPIC_TITLE}</a></p>]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[				<p class="topictitle"><!-- IF topicrow.S_UNREAD_TOPIC --><a href="{topicrow.U_NEWEST_POST}">{NEWEST_POST_IMG}</a> <!-- ENDIF -->{topicrow.ATTACH_ICON_IMG} <a href="{topicrow.U_VIEW_TOPIC}">{topicrow.TOPIC_TITLE}</a>]]></inline-find>
+					<inline-action type="after-add"><![CDATA[<!-- IF topicrow.S_TOPIC_POST_FUTURE --> {topicrow.FUTURE_IMG} <!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+			</edit>
+		</open>
+		<open src="styles/subsilver2/template/viewforum_body.html">
+			<edit>
+				<find><![CDATA[			<td class="row1" width="25" align="center">{topicrow.TOPIC_FOLDER_IMG}</td>]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[			<td class="row1]]></inline-find>
+					<inline-action type="after-add"><![CDATA[<!-- IF topicrow.S_TOPIC_POST_FUTURE --> future<!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[				<td class="row1" width="25" align="center"><!-- IF topicrow.TOPIC_ICON_IMG --><img src="{T_ICONS_PATH}{topicrow.TOPIC_ICON_IMG}" width="{topicrow.TOPIC_ICON_IMG_WIDTH}" height="{topicrow.TOPIC_ICON_IMG_HEIGHT}" alt="" title="" /><!-- ENDIF --></td>]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[				<td class="row1]]></inline-find>
+					<inline-action type="after-add"><![CDATA[<!-- IF topicrow.S_TOPIC_POST_FUTURE --> future<!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[			<td class="row1">]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[			<td class="row1]]></inline-find>
+					<inline-action type="after-add"><![CDATA[<!-- IF topicrow.S_TOPIC_POST_FUTURE --> future<!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[				{topicrow.ATTACH_ICON_IMG} <!-- IF topicrow.S_HAS_POLL or topicrow.S_TOPIC_MOVED --><b>{topicrow.TOPIC_TYPE}</b> <!-- ENDIF --><a title="{L_POSTED}: {topicrow.FIRST_POST_TIME}" href="{topicrow.U_VIEW_TOPIC}"class="topictitle">{topicrow.TOPIC_TITLE}</a>]]></find>
+				<action type="after-add"><![CDATA[				<!-- IF topicrow.S_TOPIC_POST_FUTURE -->
+					{FUTURE_IMG}&nbsp;
+				<!-- ENDIF -->]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[			<td class="row2" width="130" align="center"><p class="topicauthor">{topicrow.TOPIC_AUTHOR_FULL}</p></td>]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[			<td class="row2]]></inline-find>
+					<inline-action type="after-add"><![CDATA[<!-- IF topicrow.S_TOPIC_POST_FUTURE --> future<!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[			<td class="row1" width="50" align="center"><p class="topicdetails">{topicrow.REPLIES}</p></td>]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[			<td class="row1]]></inline-find>
+					<inline-action type="after-add"><![CDATA[<!-- IF topicrow.S_TOPIC_POST_FUTURE --> future<!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[			<td class="row2" width="50" align="center"><p class="topicdetails">{topicrow.VIEWS}</p></td>]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[			<td class="row2]]></inline-find>
+					<inline-action type="after-add"><![CDATA[<!-- IF topicrow.S_TOPIC_POST_FUTURE --> future<!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[			<td class="row1" width="140" align="center">]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[			<td class="row1]]></inline-find>
+					<inline-action type="after-add"><![CDATA[<!-- IF topicrow.S_TOPIC_POST_FUTURE --> future<!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[				<td class="row1" width="25" align="center">{topicrow.TOPIC_FOLDER_IMG}</td>]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[				<td class="row1]]></inline-find>
+					<inline-action type="after-add"><![CDATA[<!-- IF topicrow.S_TOPIC_POST_FUTURE --> future<!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[					<td class="row1" width="25" align="center"><!-- IF topicrow.TOPIC_ICON_IMG --><img src="{T_ICONS_PATH}{topicrow.TOPIC_ICON_IMG}" width="{topicrow.TOPIC_ICON_IMG_WIDTH}" height="{topicrow.TOPIC_ICON_IMG_HEIGHT}" alt="" title="" /><!-- ENDIF --></td>]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[					<td class="row1]]></inline-find>
+					<inline-action type="after-add"><![CDATA[<!-- IF topicrow.S_TOPIC_POST_FUTURE --> future<!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[				<td class="row1">]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[				<td class="row1]]></inline-find>
+					<inline-action type="after-add"><![CDATA[<!-- IF topicrow.S_TOPIC_POST_FUTURE --> future<!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[					{topicrow.ATTACH_ICON_IMG} <!-- IF topicrow.S_HAS_POLL or topicrow.S_TOPIC_MOVED --><b>{topicrow.TOPIC_TYPE}</b> <!-- ENDIF --><a title="{L_POSTED}: {topicrow.FIRST_POST_TIME}" href="{topicrow.U_VIEW_TOPIC}" class="topictitle">{topicrow.TOPIC_TITLE}</a>]]></find>
+				<action type="after-add"><![CDATA[					<!-- IF topicrow.S_TOPIC_POST_FUTURE -->
+						{FUTURE_IMG}&nbsp;
+					<!-- ENDIF -->]]></action>
+			</edit>
+			<edit>
+				<find><![CDATA[				<td class="row2" width="130" align="center"><p class="topicauthor">{topicrow.TOPIC_AUTHOR_FULL}</p></td>]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[				<td class="row2]]></inline-find>
+					<inline-action type="after-add"><![CDATA[<!-- IF topicrow.S_TOPIC_POST_FUTURE --> future<!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[				<td class="row1" width="50" align="center"><p class="topicdetails">{topicrow.REPLIES}</p></td>]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[				<td class="row1]]></inline-find>
+					<inline-action type="after-add"><![CDATA[<!-- IF topicrow.S_TOPIC_POST_FUTURE --> future<!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[				<td class="row2" width="50" align="center"><p class="topicdetails">{topicrow.VIEWS}</p></td>]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[				<td class="row2]]></inline-find>
+					<inline-action type="after-add"><![CDATA[<!-- IF topicrow.S_TOPIC_POST_FUTURE --> future<!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[				<td class="row1" width="140" align="center">]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[				<td class="row1]]></inline-find>
+					<inline-action type="after-add"><![CDATA[<!-- IF topicrow.S_TOPIC_POST_FUTURE --> future<!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+			</edit>
+		</open>
+		<open src="styles/subsilver2/template/viewtopic_body.html">
+			<edit>
+				<find><![CDATA[					<!-- IF postrow.S_POST_UNAPPROVED or postrow.S_POST_REPORTED -->]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[					<!-- IF postrow.S_POST_UNAPPROVED or postrow.S_POST_REPORTED]]></inline-find>
+					<inline-action type="after-add"><![CDATA[ or postrow.S_TOPIC_POST_FUTURE]]></inline-action>
+				</inline-edit>
+			</edit>
+			<edit>
+				<find><![CDATA[							<td class="gensmall"><!-- IF postrow.S_POST_UNAPPROVED --><span class="postapprove">{UNAPPROVED_IMG} <a href="{postrow.U_MCP_APPROVE}">{L_POST_UNAPPROVED}</a></span><br /> <!-- ENDIF --> <!-- IF postrow.S_POST_REPORTED --><span class="postreported">{REPORTED_IMG} <a href="{postrow.U_MCP_REPORT}">{L_POST_REPORTED}</a></span><!-- ENDIF --></td>]]></find>
+				<inline-edit>
+					<inline-find><![CDATA[							<td class="gensmall"><!-- IF postrow.S_POST_UNAPPROVED --><span class="postapprove">{UNAPPROVED_IMG} <a href="{postrow.U_MCP_APPROVE}">{L_POST_UNAPPROVED}</a></span><br /> <!-- ENDIF --> <!-- IF postrow.S_POST_REPORTED --><span class="postreported">{REPORTED_IMG} <a href="{postrow.U_MCP_REPORT}">{L_POST_REPORTED}</a></span><!-- ENDIF -->]]></inline-find>
+					<inline-action type="after-add"><![CDATA[ <!-- IF postrow.S_TOPIC_POST_FUTURE --><span>{FUTURE_IMG} <strong>{L_POST_FUTURE}</strong></span><!-- ENDIF -->]]></inline-action>
+				</inline-edit>
+			</edit>
+		</open>
+		<open src="styles/subsilver2/theme/stylesheet.css">
+			<edit>
+				<find><![CDATA[.username-coloured {]]></find>
+				<action type="before-add"><![CDATA[.future {
+	background-color: #F6F4D0 !important;
+}
+]]></action>
+			</edit>
+		</open>
+		<diy-instructions lang="en"><![CDATA[Refresh the template, theme, and imageset for your style in the ACP (go to the 'Styles' tab).]]></diy-instructions>
+	</action-group>
+</mod>
